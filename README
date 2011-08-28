@@ -1,0 +1,10 @@
+Comandos úteis:
+
+git status                  // verifica o status do repositório
+
+git pull                    // baixa os arquivos modificados do
+                            // servidor
+
+git add .                   // adiciona todos os arquivos modificados
+git commit -m "comentario"  // "entrega" os arquivos adicionados
+git push -u origin master   // envia os arquivos para o servidor remoto
