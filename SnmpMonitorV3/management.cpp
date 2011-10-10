@@ -77,8 +77,8 @@ void Management::createInterface(Device* dev, string name, string type){
 }
 
 
-void Management::move(Device* dev, int x, int y){
-    dev->setPos(x,y);
+void Management::move(Device* dev, int pressedX, int pressedY, int x, int y){
+    dev->setPos(pressedX - x, pressedY - y);
 }
 
 // funcao que apaga todas os links de um device!

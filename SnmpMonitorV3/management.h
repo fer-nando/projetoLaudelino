@@ -16,7 +16,7 @@ private:
     vector<Link*> links;
 public:
     Management();
-    void move(Device* dev, int x, int y);
+    void move(Device* dev, int pressedX, int pressedY, int x, int y);
     bool removeLinkFrom(Device* dev);
     void createInterface(Device* dev, string name, string type);
     void removeDevice(Device *dev);

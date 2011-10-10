@@ -37,6 +37,7 @@ class MainWindow : public QMainWindow
 private:
     QPixmap *pixmapDefault;
     int x, y, X_MAX,Y_MAX, RECT_WIDTH, RECT_HEIGHT, X_OFFSET, Y_OFFSET;
+    int pressedX, pressedY;
     bool moving;
     QRect *rect;
     Device *moveDevice,*dev;
@@ -55,6 +56,8 @@ protected:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+private slots:
+    void on_newDeviceOk();
 };
 
 #endif // MAINWINDOW_H

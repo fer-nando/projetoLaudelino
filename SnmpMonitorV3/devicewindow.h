@@ -19,7 +19,8 @@ namespace Ui {
 class DeviceWindow : public QMainWindow
 {
     Q_OBJECT
-
+signals:
+    void windowClosed();
 public:
     explicit DeviceWindow(QWidget *parent = 0);
     ~DeviceWindow();

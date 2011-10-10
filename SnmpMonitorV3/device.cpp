@@ -66,7 +66,7 @@ void Device::addIntf(Interface *intf){
 }
 
 void Device::setPos(int x, int y){
-    rect->moveTo(x,y);
+    rect->moveTo(rect->x() - x, rect->y() - y);
 }
 
 void Device::setIp(string ip){

@@ -72,6 +72,7 @@ void DeviceWindow::on_buttonBoxOk(){
                         delete intf;
                     }
             }
+            emit windowClosed();
             this->close();
         }else{
             ui->textWarning->setText("Host Duplicado!");

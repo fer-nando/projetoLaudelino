@@ -44,8 +44,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e){
         x = e->x();
         y = e->y();
         if(isInsideArea()){
-                mgmt->move(moveDevice,x,y);
-                repaint();
+            cout << "pX = " << pressedX << ", pY = " << pressedY << ", x = " << x << ", y = " << y << endl;
+            mgmt->move(moveDevice,pressedX,pressedY,x,y);
+            repaint();
+            pressedX = x;
+            pressedY = y;
         }
     }
 }
@@ -87,16 +90,16 @@ void MainWindow::paintEvent(QPaintEvent *event){
          QString st = QString::fromStdString((*it)->getIntf1()->getName());
          st.append(":");
          st.append(QString::fromStdString((*it)->getIntf2()->getName()));
-         pt.setX((((*it)->getDev1())->getRect()->x()+((*it)->getDev2())->getRect()->x())/2 + 10 + (*it)->getLineDeltaX());
-         pt.setY((((*it)->getDev1())->getRect()->y()+((*it)->getDev2())->getRect()->y())/2 + 10 + (*it)->getLineDeltaY());
+         pt.setX((((*it)->getDev1())->getRect()->x()+((*it)->getDev2())->getRect()->x())/2 + 20 + (*it)->getLineDeltaX());
+         pt.setY((((*it)->getDev1())->getRect()->y()+((*it)->getDev2())->getRect()->y())/2 + 20 + (*it)->getLineDeltaY());
          painter.setPen(QPen(Qt::green,3));
          path.moveTo(((*it)->getDev1())->getRect()->center());
          path.cubicTo((((*it)->getDev1())->getRect()->center()),pt,(((*it)->getDev2())->getRect()->center()));
          painter.drawPath(path);
          painter.setPen(QPen(Qt::black,3));
-         pt.setX(pt.x()-20);
+         pt.setX(pt.x()-30);
          painter.drawText(pt,st);
-         pt.setX(pt.x()+20);
+         pt.setX(pt.x()+30);
     }
     painter.setPen(QPen());
     painter.setBrush(QBrush(Qt::blue));
@@ -133,6 +136,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         moveDevice = mgmt->verifyClickCollision(x,y);
         if(moveDevice != 0){
             moving = true;
+            pressedX = x;
+            pressedY = y;
         }else{
             moving = false;
         }
@@ -144,8 +149,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                      deviceWindow->show();
                      deviceWindow->setManagement(mgmt);
                      deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","r/s","1841/2960",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
-                     repaint();
+                     //repaint(); // sem isso evita que pinte antes de saber se clicou em 'ok' ou 'cancel'
+                     connect(deviceWindow, SIGNAL(windowClosed()), this, SLOT(on_newDeviceOk()));
              }
          }
     }
+}
+
+void MainWindow::on_newDeviceOk(){
+    repaint();
 }
