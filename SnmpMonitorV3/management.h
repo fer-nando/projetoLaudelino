@@ -22,7 +22,6 @@ public:
     void removeDevice(Device *dev);
     bool rectCollision(int x, int y, int height, int width);
     bool removeLink(Device *dev1, Interface* intf1, Device* dev2, Interface* intf2);
-    bool removeDeviceFrom(Device *dev);
     bool existInterface(Device* dev, Interface* intf);
     bool existHostname(string hostname);
     void verifyRedundantLink(Link *l);

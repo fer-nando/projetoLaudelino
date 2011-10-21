@@ -44,7 +44,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e){
         x = e->x();
         y = e->y();
         if(isInsideArea()){
-            cout << "pX = " << pressedX << ", pY = " << pressedY << ", x = " << x << ", y = " << y << endl;
             mgmt->move(moveDevice,pressedX,pressedY,x,y);
             repaint();
             pressedX = x;
@@ -77,6 +76,7 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::paintEvent(QPaintEvent *event){
+
     QPainter painter(this);
     painter.setBrush(QBrush(Qt::lightGray));
     painter.drawRect(*rect);

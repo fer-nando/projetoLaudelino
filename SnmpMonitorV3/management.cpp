@@ -101,6 +101,8 @@ bool Management::removeLinkFrom(Device *dev){
     for( i= links.begin(); i!=links.end(); ++i){
         // se o device esta em alguma das DUAS pontas do link... APAGUE ESTE LINK!
         if( (dev->getHostname().compare(((*i)->getDev1())->getHostname()) == 0) || (dev->getHostname().compare(((*i)->getDev2())->getHostname()) == 0)){
+                (*i)->getIntf1()->setWired(false);
+                (*i)->getIntf2()->setWired(false);
                 links.erase(i);
                 return true;
         }

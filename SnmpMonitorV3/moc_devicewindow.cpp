@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'devicewindow.h'
 **
-** Created: Sat Oct 8 17:20:08 2011
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
+** Created:
+**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -11,7 +11,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'devicewindow.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.7.2. It"
+#error "This file was generated using the moc from 4.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -23,23 +23,26 @@ static const uint qt_meta_data_DeviceWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      14,   13,   13,   13, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      14,   13,   13,   13, 0x08,
-      31,   13,   13,   13, 0x08,
+      29,   13,   13,   13, 0x08,
+      46,   13,   13,   13, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_DeviceWindow[] = {
-    "DeviceWindow\0\0on_buttonBoxOk()\0"
-    "on_buttonBoxCancel()\0"
+    "DeviceWindow\0\0windowClosed()\0"
+    "on_buttonBoxOk()\0on_buttonBoxCancel()\0"
 };
 
 const QMetaObject DeviceWindow::staticMetaObject = {
@@ -71,12 +74,19 @@ int DeviceWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: on_buttonBoxOk(); break;
-        case 1: on_buttonBoxCancel(); break;
+        case 0: windowClosed(); break;
+        case 1: on_buttonBoxOk(); break;
+        case 2: on_buttonBoxCancel(); break;
         default: ;
         }
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
+}
+
+// SIGNAL 0
+void DeviceWindow::windowClosed()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
 QT_END_MOC_NAMESPACE
