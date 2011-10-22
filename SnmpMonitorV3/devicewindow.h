@@ -28,6 +28,7 @@ public:
     void setManagement(Management *mgmt);
     void setIsEdit(bool);
     void afterConstructor();
+    void setType(string);
 private:
     Device* device;
     Management* mgmt;

@@ -32,7 +32,7 @@ void Device::setInterfaceWired(Interface *intf, bool wired){
 void Device::printInterfaces(){
     cout << "\t Interfaces: " << endl;
     for(vector<Interface*>::iterator it = interfaces.begin(); it != interfaces.end(); ++ it){
-        cout << "\t " << (*it)->getName() <<  " wired: " << (*it)->getWired() <<endl;
+        cout << "\t " << (*it)->getType() << " " << (*it)->getName() <<  " wired: " << (*it)->getWired() <<endl;
     }
 }
 

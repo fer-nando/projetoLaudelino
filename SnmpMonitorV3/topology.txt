@@ -1,0 +1,10 @@
+Device
+10.10.10.10,hostname,Router,XXXX,362,230,50,50
+Interface
+Fa0/0
+Device
+10.10.10.101,hostname1,Router,XXXX,735,303,50,50
+Interface
+Fa0/0
+Link
+hostname,Fa0/0,hostname1,Fa0/0

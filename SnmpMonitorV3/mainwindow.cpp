@@ -7,7 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent),ui(new Ui::MainWind
     myInit();
     setMouseTracking(true);
     rect = new QRect(X_OFFSET,Y_OFFSET,X_MAX,Y_MAX-RECT_HEIGHT);
-   // pixmapDefault = new QPixmap("/home/vinicius/qtworkspace/SnmpMonitorV3/SnmpMonitorV3/switch.png");
+    pixmapSwitch = new QPixmap("switch.png");
+    pixmapRouter = new QPixmap("router.png");
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e){
@@ -37,12 +38,24 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
     if(e->text().toStdString().compare("l") == 0){
         mgmt->printLinks();
     }
+    if(e->text().toStdString().compare("r") == 0){
+        mgmt->readTopology();
+        on_newDeviceOk();
+        //cout << "rect->bottomLeft().x(): " << rect->bottomLeft().x() << " rect->bottomRight().x(): " << rect->bottomRight().x() << " rect->topLeft().y(): " << rect->topLeft().y() << " rect->bottomRight().y(): " << rect->bottomRight().y() << endl;
+    }
+    if(e->text().toStdString().compare("w") == 0){
+        mgmt->writeTopology();
+    }
+    if(e->text().toStdString().compare("p") == 0){
+        on_newDeviceOk();
+    }
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *e){
-    if(moving && ui->radioMove->isChecked()){ // pseudo redundante verificar o radio, consertar dps
+    if(moving && ui->radioMove->isChecked()){
         x = e->x();
         y = e->y();
+       // cout << "x: "<< x << " y: " << y << endl;
         if(isInsideArea()){
             mgmt->move(moveDevice,pressedX,pressedY,x,y);
             repaint();
@@ -60,12 +73,12 @@ void MainWindow::myInit(){
     RECT_HEIGHT = 50;
     Y_OFFSET = 100;
     X_OFFSET = 30;
-    X_MAX = 1120;
+    X_MAX = 1100;
     Y_MAX = 570;
 }
 
 bool MainWindow::isInsideArea(){
-    if(((x > X_OFFSET) && (x < X_MAX - RECT_WIDTH)) && ((y > Y_OFFSET) && (y < Y_MAX - RECT_HEIGHT))){
+    if(((x > rect->bottomLeft().x() + RECT_WIDTH) && (x < rect->bottomRight().x() - RECT_WIDTH)) && ((y > rect->topLeft().y() + RECT_HEIGHT) && (y < rect->bottomLeft().y() - RECT_HEIGHT))){
         return true;
     }
     return false;
@@ -76,13 +89,12 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::paintEvent(QPaintEvent *event){
-
     QPainter painter(this);
     painter.setBrush(QBrush(Qt::lightGray));
     painter.drawRect(*rect);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(QBrush(Qt::yellow));
-    painter.drawText(150,150,"AREA PARA SETTAR A TOPOLOGIA!");
+    //painter.drawText(150,150,"AREA PARA SETTAR A TOPOLOGIA!");
     painter.setBrush(QBrush());
     for(vector<Link*>::iterator it = mgmt->getLinks().begin(); it != mgmt->getLinks().end(); ++it){
          QPainterPath path;
@@ -106,15 +118,23 @@ void MainWindow::paintEvent(QPaintEvent *event){
     for(vector<Device*>::iterator i = mgmt->getDevices().begin(); i != mgmt->getDevices().end(); ++i){
         //cout << ((*i)->getRect())->x() << endl;
         painter.drawText(((*i)->getRect())->x(),((*i)->getRect())->y()-5,(*i)->getHostname().c_str());
-        painter.drawRect(*((*i)->getRect()));
-       // painter.drawPixmap(*((*i)->getRect()),*pixmapDefault); pinta um switch ao inves do quadro amarelo
+        //painter.drawRect(*((*i)->getRect()));
+        if((*i)->getType().compare("Router") == 0){ // O DEVICE EH UM ROUTER!
+            painter.drawPixmap(*((*i)->getRect()),*pixmapRouter);
+        }else{ // EH um SWITCH
+            painter.drawPixmap(*((*i)->getRect()),*pixmapSwitch);
+        }
     }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
     x = event->x();
     y = event->y();
+   // cout  << "x: " << x << " y: " << y << endl;
     dev = mgmt->verifyClickCollision(x,y); // verifica se o click colidiu com algum device, se colidiu a variavel dev ja recebe o ponteiro!
+    if(event->button() == Qt::RightButton){
+        cout << "right click at: " << dev->getHostname() << " GERAR GRAFICO!" << endl;
+    }
     if(ui->radioEdit->isChecked()){
         //mgmt->printRect();
         if(dev != 0){
@@ -146,9 +166,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
          if(isInsideArea()){ // ta dentro da area
              if(!(mgmt->rectCollision(x,y,RECT_HEIGHT,RECT_WIDTH))){ // o click nao colidiu com nenhum no existe
                      deviceWindow = new DeviceWindow();
-                     deviceWindow->show();
                      deviceWindow->setManagement(mgmt);
-                     deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","r/s","1841/2960",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
+                     if(ui->radioRouter->isChecked()){ // setar a string padrao e criar o desenho com o "Type" correto!
+                         deviceWindow->setType("Router");
+                         deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","Router","1841",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
+                     }else{
+                         deviceWindow->setType("Switch");
+                         deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","Switch","2960",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
+                     }
+                     deviceWindow->show();
                      //repaint(); // sem isso evita que pinte antes de saber se clicou em 'ok' ou 'cancel'
                      connect(deviceWindow, SIGNAL(windowClosed()), this, SLOT(on_newDeviceOk()));
              }

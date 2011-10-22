@@ -7,6 +7,8 @@ LinkWindow::LinkWindow(QWidget *parent) : QMainWindow(parent),ui(new Ui::LinkWin
     connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(on_buttonBoxOk()));
     connect(ui->buttonBox,SIGNAL(rejected()),this,SLOT(on_buttonBoxCancel()));
     removeLink = false;
+    ui->textWarning->setReadOnly(true);
+    ui->textWarning->setTextColor(Qt::red);
 }
 
 LinkWindow::~LinkWindow()
@@ -19,20 +21,33 @@ void LinkWindow::on_buttonBoxCancel(){
 }
 
 void LinkWindow::on_buttonBoxOk(){
+    bool willRemove = true;
+    ui->textWarning->clear();
     if(ui->comboIntf1->currentText().compare("") != 0 && ui->comboIntf2->currentText().compare("") != 0){ // evitar texto null
-        intf1 = new Interface(ui->comboIntf1->currentText().toStdString(),ui->comboIntf1->currentText().toStdString());
-        intf2 = new Interface(ui->comboIntf2->currentText().toStdString(),ui->comboIntf2->currentText().toStdString());
-        if(!removeLink){ // se NAO esta no modo remove!
-            dev1->setInterfaceWired(intf1,true);
-            dev2->setInterfaceWired(intf2,true);
-            mgmt->createLink(dev1,intf1,dev2,intf2);
-            dev1->addDev(intf1,dev2); // para mostrar adj dps
-            dev2->addDev(intf2,dev1); // para mostrar adj dps
-        }else{ // modo remove
-            mgmt->removeLink(dev1,intf1,dev2,intf2);
+        intf1 = new Interface(ui->comboIntf1->currentText().toStdString(),mgmt->subStrInterfaceType(ui->comboIntf1->currentText().toStdString()));
+        intf2 = new Interface(ui->comboIntf2->currentText().toStdString(),mgmt->subStrInterfaceType(ui->comboIntf2->currentText().toStdString()));
+        if(!mgmt->existStrLinkMismatch(intf1,intf2)){
+            if(!removeLink){ // se NAO esta no modo remove!
+                dev1->setInterfaceWired(intf1,true);
+                dev2->setInterfaceWired(intf2,true);
+                mgmt->createLink(dev1,intf1,dev2,intf2);
+                dev1->addDev(intf1,dev2); // para mostrar adj dps
+                dev2->addDev(intf2,dev1); // para mostrar adj dps
+            }else{ // modo remove
+                willRemove = mgmt->removeLink(dev1,intf1,dev2,intf2);
+            }
+        }else{
+            willRemove = false; // mismatch Serial com FA ou GI
         }
+    }else{
+        willRemove = false; //setado como false pq se ele entrou aq eh porque tem texto null nos combobox, esta situaco pode ocorrer
+        // qndo um device de 2 intf vai conectar a um de 1 intf
     }
-    this->close();
+    if(willRemove){
+         this->close();
+    }else{
+        ui->textWarning->setText("Error: remove link mismatch!");
+    }
 }
 
 void LinkWindow::setRemoveLink(bool remove){

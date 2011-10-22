@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'devicewindow.ui'
 **
-** Created: Sat Oct 8 17:38:14 2011
+** Created: Sat Oct 22 10:37:43 2011
 **      by: Qt User Interface Compiler version 4.7.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -153,11 +153,11 @@ public:
         labelHostname->setText(QApplication::translate("DeviceWindow", "Hostname:", 0, QApplication::UnicodeUTF8));
         lineHostname->setText(QApplication::translate("DeviceWindow", "hostname", 0, QApplication::UnicodeUTF8));
         labelIP->setText(QApplication::translate("DeviceWindow", "IPv4:", 0, QApplication::UnicodeUTF8));
-        lineIP->setText(QApplication::translate("DeviceWindow", "x.x.x.x", 0, QApplication::UnicodeUTF8));
+        lineIP->setText(QApplication::translate("DeviceWindow", "10.10.10.10", 0, QApplication::UnicodeUTF8));
         labelType->setText(QApplication::translate("DeviceWindow", "Type:", 0, QApplication::UnicodeUTF8));
         lineType->setText(QApplication::translate("DeviceWindow", "Router/Switch", 0, QApplication::UnicodeUTF8));
         labelType_2->setText(QApplication::translate("DeviceWindow", "Serie:", 0, QApplication::UnicodeUTF8));
-        lineSerie->setText(QApplication::translate("DeviceWindow", "1841/2960", 0, QApplication::UnicodeUTF8));
+        lineSerie->setText(QApplication::translate("DeviceWindow", "XXXX", 0, QApplication::UnicodeUTF8));
         labelInterfaces->setText(QApplication::translate("DeviceWindow", "Interfaces:", 0, QApplication::UnicodeUTF8));
         labelWarning->setText(QApplication::translate("DeviceWindow", "Warning:", 0, QApplication::UnicodeUTF8));
         textEditInterfaces->setHtml(QApplication::translate("DeviceWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

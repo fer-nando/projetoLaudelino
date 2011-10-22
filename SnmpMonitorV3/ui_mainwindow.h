@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Oct 8 16:53:42 2011
+** Created: Sat Oct 22 12:37:00 2011
 **      by: Qt User Interface Compiler version 4.7.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -50,7 +50,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1216, 658);
+        MainWindow->resize(1161, 658);
         MainWindow->setTabShape(QTabWidget::Rounded);
         MainWindow->setDockNestingEnabled(true);
         centralWidget = new QWidget(MainWindow);
@@ -69,7 +69,7 @@ public:
         radioRouter = new QRadioButton(horizontalLayoutWidget);
         radioRouter->setObjectName(QString::fromUtf8("radioRouter"));
         QIcon icon;
-        icon.addFile(QString::fromUtf8("rx.gif"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QString::fromUtf8("router.png"), QSize(), QIcon::Normal, QIcon::Off);
         radioRouter->setIcon(icon);
         radioRouter->setIconSize(QSize(36, 36));
 
@@ -96,7 +96,7 @@ public:
         radioMove = new QRadioButton(horizontalLayoutWidget);
         radioMove->setObjectName(QString::fromUtf8("radioMove"));
         QIcon icon3;
-        icon3.addFile(QString::fromUtf8("move.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon3.addFile(QString::fromUtf8("moveDevice.png"), QSize(), QIcon::Normal, QIcon::Off);
         radioMove->setIcon(icon3);
         radioMove->setIconSize(QSize(36, 36));
 
@@ -104,23 +104,27 @@ public:
 
         radioEdit = new QRadioButton(horizontalLayoutWidget);
         radioEdit->setObjectName(QString::fromUtf8("radioEdit"));
-        radioEdit->setIcon(icon);
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8("editDevice.png"), QSize(), QIcon::Normal, QIcon::Off);
+        radioEdit->setIcon(icon4);
         radioEdit->setIconSize(QSize(36, 36));
 
         horizontalLayout->addWidget(radioEdit);
 
         radioLink = new QRadioButton(horizontalLayoutWidget);
         radioLink->setObjectName(QString::fromUtf8("radioLink"));
-        QIcon icon4;
-        icon4.addFile(QString::fromUtf8("delete.png"), QSize(), QIcon::Normal, QIcon::Off);
-        radioLink->setIcon(icon4);
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8("deleteWire.png"), QSize(), QIcon::Normal, QIcon::Off);
+        radioLink->setIcon(icon5);
         radioLink->setIconSize(QSize(36, 36));
 
         horizontalLayout->addWidget(radioLink);
 
         radioDel = new QRadioButton(horizontalLayoutWidget);
         radioDel->setObjectName(QString::fromUtf8("radioDel"));
-        radioDel->setIcon(icon4);
+        QIcon icon6;
+        icon6.addFile(QString::fromUtf8("deleteDevice.png"), QSize(), QIcon::Normal, QIcon::Off);
+        radioDel->setIcon(icon6);
         radioDel->setIconSize(QSize(36, 36));
 
         horizontalLayout->addWidget(radioDel);
@@ -133,7 +137,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1216, 25));
+        menuBar->setGeometry(QRect(0, 0, 1161, 25));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));

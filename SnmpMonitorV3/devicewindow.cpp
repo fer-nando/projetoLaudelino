@@ -10,6 +10,10 @@ DeviceWindow::DeviceWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
     isEdit = false;
 }
 
+void DeviceWindow::setType(string t){
+    ui->lineType->setText(QString::fromStdString(t));
+}
+
 void DeviceWindow::afterConstructor(){
     if(isEdit){
         ui->lineHostname->setText(QString::fromStdString(device->getHostname()));
@@ -51,31 +55,60 @@ void DeviceWindow::setManagement(Management *mgmt){
 }
 
 void DeviceWindow::on_buttonBoxOk(){
+        bool thereIsAnyError = false; // FLAG
         serie = ui->lineSerie->text().toStdString();
         type = ui->lineType->text().toStdString();
         ip = ui->lineIP->text().toStdString();
         hostname = ui->lineHostname->text().toStdString();
+        ui->textWarning->clear();
         if(!(mgmt->existHostname(hostname)) || isEdit){
-            device->setHostname(hostname);
-            device->setIp(ip);
-            device->setSerie(serie);
-            device->setType(type);
             QString qstr = ui->textEditInterfaces->toPlainText();
             QStringList qsltr = qstr.split("\n");
             QStringList::const_iterator constIterator;
             for (constIterator = qsltr.constBegin(); constIterator != qsltr.constEnd();++constIterator){
                     qstr = (*constIterator).toLocal8Bit().constData();
-                    Interface *intf = new Interface(qstr.toStdString(),qstr.toStdString());
-                    if(!(mgmt->existInterface(device,intf))){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS!
-                        device->addIntf(intf);
-                    }else{
-                        delete intf;
+                    if(qstr.toStdString().size() >= 5){ // pog p/ evitar o "";
+                            Interface *intf = new Interface(qstr.toStdString(),mgmt->subStrInterfaceType(qstr.toStdString()));
+                            if(mgmt->regexInterfaceName(intf)){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS! e faz o regex!
+                                if(!(mgmt->existInterface(device,intf))){
+                                    device->addIntf(intf);
+                                }
+                            }else{
+                                thereIsAnyError = true;
+                                QString warningStr("Interface name error: ");
+                                warningStr.append(QString::fromStdString(intf->getName()));
+                                ui->textWarning->setText(ui->textWarning->toPlainText().append(warningStr).append("\n"));
+                                delete intf;
+                            }
                     }
             }
-            emit windowClosed();
-            this->close();
+            // VERIFICA SE EH SWITCH OU ROUTER
+            if(( type.compare("Router")!=0 && type.compare("Switch")!=0)){
+                thereIsAnyError = true;
+                QString warningStr("Type name error: ");
+                ui->textWarning->setText(ui->textWarning->toPlainText().append(warningStr).append(ui->lineType->text()));
+            }
+            if(!mgmt->regexIP(ip) || mgmt->existIP(ip)){ // se nao passou passou pelo regex || se existe o ip
+                QString warningStr("");
+                if(mgmt->existIP(ip) && !isEdit){ // se ja existia alguem EE se nao estiver editando
+                    thereIsAnyError = true;
+                    warningStr.append("IP duplicated error: ");
+                    ui->textWarning->setText(ui->textWarning->toPlainText().append(warningStr).append(ui->lineIP->text()));
+                }else if(!mgmt->regexIP(ip)){ // se nao passou pelo regex! independente se estiver editando ou nao!
+                    thereIsAnyError = true;
+                    warningStr.append("IP error: ");
+                    ui->textWarning->setText(ui->textWarning->toPlainText().append(warningStr).append(ui->lineIP->text()));
+                }
+            }
+            if(!thereIsAnyError){
+                device->setHostname(hostname);
+                device->setIp(ip);
+                device->setSerie(serie);
+                device->setType(type);
+                emit windowClosed();
+                this->close();
+            }
         }else{
-            ui->textWarning->setText("Host Duplicado!");
-            // FAZER O TRATAMENTO DE EXCECAO PARA NOME DE INTERFACE, IP, atraves de expressao regular!
+            ui->textWarning->setText("Duplicated host name!");
         }
 }

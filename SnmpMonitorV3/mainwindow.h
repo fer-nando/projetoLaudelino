@@ -35,7 +35,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
-    QPixmap *pixmapDefault;
+    QPixmap *pixmapSwitch, *pixmapRouter;
     int x, y, X_MAX,Y_MAX, RECT_WIDTH, RECT_HEIGHT, X_OFFSET, Y_OFFSET;
     int pressedX, pressedY;
     bool moving;

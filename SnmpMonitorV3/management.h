@@ -3,6 +3,11 @@
 
 #include <vector>
 #include <string>
+#include <QStringList>
+#include <QObject>
+#include <iostream>
+#include <fstream>
+#include <QRegExp>
 #include "device.h"
 #include "link.h"
 
@@ -24,12 +29,19 @@ public:
     bool removeLink(Device *dev1, Interface* intf1, Device* dev2, Interface* intf2);
     bool existInterface(Device* dev, Interface* intf);
     bool existHostname(string hostname);
+    bool existIP(string ip);
+    bool existStrLinkMismatch(Interface *intf1,Interface* intf2);
     void verifyRedundantLink(Link *l);
     void setManagement(Management* mgmt);
     void printDefault();
     void printRect();
     void printLinks();
+    void writeTopology();
+    void readTopology();
     void createLink(Device *dev1, Interface *intf1, Device *dev2, Interface *intf2);
+    bool regexInterfaceName(Interface *intf);
+    bool regexIP(string);
+    string subStrInterfaceType(string);
     Device* verifyClickCollision(int x, int y);
     Device* createDevice(string ip, string host, string type, string serie, int x, int y, int height, int width);
     vector<Device*>& getDevices();

@@ -37,7 +37,7 @@ public:
     string getUpTime();
     string getType();
     string getSerie();
-    vector<Interface*>& getInterfaces(); // aqui q tava o erro de segmentacao TINHA Q RETORNAR POR REFERENCIA PQ EU NAO TAVA USANDO UM PONTEIRO!!!!!!!!!! (MAS O FILHO DA PUTA DO QT TAVA APONTANDO PARA OUTRO METODO O ERRO -_-)
+    vector<Interface*>& getInterfaces();
     QRect* getRect();
 };
 
