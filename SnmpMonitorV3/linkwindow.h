@@ -16,6 +16,8 @@ namespace Ui {
 class LinkWindow : public QMainWindow
 {
     Q_OBJECT
+signals:
+    void windowClosed();
 private:
     Device *dev1, *dev2;
     Interface *intf1, *intf2;

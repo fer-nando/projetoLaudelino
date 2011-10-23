@@ -24,6 +24,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *e){
                     linkWindow->setDevices(dev,aux);
                     linkWindow->setManagement(mgmt);
                     linkWindow->show();
+                    connect(linkWindow, SIGNAL(windowClosed()), this, SLOT(forceRepaint()));
                 }
             }
          }
@@ -40,14 +41,14 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
     }
     if(e->text().toStdString().compare("r") == 0){
         mgmt->readTopology();
-        on_newDeviceOk();
+        repaint();
         //cout << "rect->bottomLeft().x(): " << rect->bottomLeft().x() << " rect->bottomRight().x(): " << rect->bottomRight().x() << " rect->topLeft().y(): " << rect->topLeft().y() << " rect->bottomRight().y(): " << rect->bottomRight().y() << endl;
     }
     if(e->text().toStdString().compare("w") == 0){
         mgmt->writeTopology();
     }
     if(e->text().toStdString().compare("p") == 0){
-        on_newDeviceOk();
+        repaint();
     }
 }
 
@@ -109,9 +110,9 @@ void MainWindow::paintEvent(QPaintEvent *event){
          path.cubicTo((((*it)->getDev1())->getRect()->center()),pt,(((*it)->getDev2())->getRect()->center()));
          painter.drawPath(path);
          painter.setPen(QPen(Qt::black,3));
-         pt.setX(pt.x()-30);
+         pt.setX(pt.x()-10);
          painter.drawText(pt,st);
-         pt.setX(pt.x()+30);
+         pt.setX(pt.x()+10);
     }
     painter.setPen(QPen());
     painter.setBrush(QBrush(Qt::blue));
@@ -176,12 +177,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                      }
                      deviceWindow->show();
                      //repaint(); // sem isso evita que pinte antes de saber se clicou em 'ok' ou 'cancel'
-                     connect(deviceWindow, SIGNAL(windowClosed()), this, SLOT(on_newDeviceOk()));
+                     connect(deviceWindow, SIGNAL(windowClosed()), this, SLOT(forceRepaint()));
              }
          }
     }
 }
 
-void MainWindow::on_newDeviceOk(){
+void MainWindow::forceRepaint(){
     repaint();
 }

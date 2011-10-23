@@ -40,11 +40,12 @@ void LinkWindow::on_buttonBoxOk(){
             willRemove = false; // mismatch Serial com FA ou GI
         }
     }else{
-        willRemove = false; //setado como false pq se ele entrou aq eh porque tem texto null nos combobox, esta situaco pode ocorrer
-        // qndo um device de 2 intf vai conectar a um de 1 intf
+        willRemove = false; // setado como false pq se ele entrou aq eh porque tem texto null nos combobox, esta situaco pode ocorrer
+                            // qndo um device de 2 intf vai conectar a um de 1 intf
     }
     if(willRemove){
-         this->close();
+        emit windowClosed();
+        this->close();
     }else{
         ui->textWarning->setText("Error: remove link mismatch!");
     }

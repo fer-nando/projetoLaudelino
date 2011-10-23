@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Sat Oct 22 16:01:35 2011
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
+** Created:
+**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -11,7 +11,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'mainwindow.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.7.2. It"
+#error "This file was generated using the moc from 4.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -37,7 +37,7 @@ static const uint qt_meta_data_MainWindow[] = {
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
-    "MainWindow\0\0on_newDeviceOk()\0"
+    "MainWindow\0\0forceRepaint()\0"
 };
 
 const QMetaObject MainWindow::staticMetaObject = {
@@ -69,7 +69,7 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: on_newDeviceOk(); break;
+        case 0: forceRepaint(); break;
         default: ;
         }
         _id -= 1;

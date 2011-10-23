@@ -1,3 +1,4 @@
+
 #include "interface.h"
 
 Interface::Interface(string name, string type)

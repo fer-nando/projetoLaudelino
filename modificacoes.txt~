@@ -1,0 +1,22 @@
+metodos adicionados (todos amplamente testados):
+bool Management::regexInterfaceName(Intf *intf);
+bool Management::regexIP(string);
+void DeviceWindow::setType(string);
+bool Management::existIP(string ip);
+void Management::writeTopology();
+void Management::readTopology();
+string Management::subStrInterfaceType(str); // faz a substring do nome da interface para descobrir o tipo! eh funcao de mgmt e nao da propria interface
+bool existStrLinkMismatch(Interface *intf1,Interface* intf2) // eh o cara q vai fazer a validacao para os tipos de link. por exemplo, Fa nao pode conectar com Se (Serial)
+----> CONSERTEI O ESCOPO DA AREA DA TOPOLOGIA!
+----> Todas as partes de expressoes regulares estao OK!
+link window adicionado warning, por exemplo:
+dev 1 fa0/0 -> dev 2 fa0/0
+dev 1 fa0/1 -> dev 2 fa0/1
+como todas as interfaces de dev1 e dev2 estao conectadas, todas irao aparecer na linkwindow para fazer o remove, e o q q acontece se o cara seleciona dev1 fa0/1 e dev2 fa/0? ou dev1 fa0/0 e dev2 fa0/1 ----- acontece um warning!
+Implementei a serializacao atraves de TXT pq achei q seria mais facil doq eu me empanhar em aprender a serializar objeto (achei umas paradas mto foda). Qual foi a ideia da serializacao? Simples, foi a ideia de SAVE e LOAD. Entao, funciona assim, o cara tem uma topologia bonita e ele vai la e da WRITE (evento tecla w - provisoriamente), pronto, salvou a topologia em um .txt (salva o nome do device, interfaces e links). pronto, agora q ele salvou, quando eh q ele usa? ela so vai usar isso qndo abrir o programa!!!!! entao, no momento, eu nao fiz a validacao de o cara dar um read com uma pologia ja existe, ou seja, vai duplicar as paradas. Entao ta assim, o cara tem uma topologia bonita.. aperta "w" (depois isso vira um botao) e pronto, fez o save.. no outro dia, outra hora, qndo abrir o programa e quiser carregar a topologia ele aperta "r" (read), q tb vai virar um botao depois.Fiz varias testes, desconectando links, editando devices, esrevendo e lendo e deu tudo ok!
+Ou seja, o Read, presupoe que nao existe nenhum device na topologia. se vc remover todos com o remove device e na sequencia der um READ, tudo estara na devida ordem! (pensando no seu problema, o metodo readTopology() qndo finalizado alguem deve emitir o sinal, ja esta feito)
+
+@@@@@@@@@@@@@@@@@@@@@ proximos passos @@@@@@@@@@@@@@@@@@@@@
+->Entregar na proxima semana a tarefa 8 (diagrama de comunicacoes) eh sobre o tablet e eu nao tenho o .astah dele. se quiser, marca um dia na biblioteca ate quarta q eu te ajudo.
+->Aprender a fazer um grafico, usando qwt E fechar os "signals". Cara, eu ate ia implementar o resto dos signals, so q como para mim tudo esta funcionando, fica mais complicado de entender onde eu tenho que chamar os signals (se quiser a gente faz junto na biblioteca).
+->Depois q os graficos estiverem prontos para os parametros do eixo x, eixo y, integramos com o script (qndo chegar nesse momento eu te passo o programa de simulacao de redes e o scripts para pode testar e fazer as paradas neste ponto a gente volta pra biblioteca).

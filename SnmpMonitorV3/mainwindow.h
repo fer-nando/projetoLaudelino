@@ -57,7 +57,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
 private slots:
-    void on_newDeviceOk();
+    void forceRepaint();
 };
 
 #endif // MAINWINDOW_H

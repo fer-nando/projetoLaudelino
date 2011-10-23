@@ -28,9 +28,9 @@ string Management::subStrInterfaceType(string str){
 }
 
 bool Management::existStrLinkMismatch(Interface *intf1,Interface* intf2){ // unica incompatibilidade eh serial com fa ou gi
-    if(intf1->getType().compare("Se") == 0 && (intf2->getType().compare("Fa") || intf2->getType().compare("Gi"))){ // Serial eh incompativel com Fa e Gi
+    if(intf1->getType().compare("Se") == 0 && (!intf2->getType().compare("Fa") || !intf2->getType().compare("Gi"))){ // Serial eh incompativel com Fa e Gi
         return true;
-    }else if(intf2->getType().compare("Se") == 0 && (intf1->getType().compare("Fa") || intf1->getType().compare("Gi"))){
+    }else if(intf2->getType().compare("Se") == 0 && (!intf1->getType().compare("Fa") || !intf1->getType().compare("Gi"))){
         return true;
     }
     return false;
