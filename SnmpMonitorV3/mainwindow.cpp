@@ -6,9 +6,12 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent),ui(new Ui::MainWind
     mgmt = new Management();
     myInit();
     setMouseTracking(true);
-    rect = new QRect(X_OFFSET,Y_OFFSET,X_MAX,Y_MAX-RECT_HEIGHT);
+    rect = new QRect(X_OFFSET,Y_UPPER_OFFSET,X_MAX,Y_MAX);
     pixmapSwitch = new QPixmap("switch.png");
     pixmapRouter = new QPixmap("router.png");
+
+    connect(ui->toolOpen, SIGNAL(clicked()), this, SLOT(openEvent()));
+    connect(ui->toolSave, SIGNAL(clicked()), this, SLOT(saveEvent()));
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e){
@@ -29,7 +32,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *e){
             }
          }
     }
-
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e){
@@ -38,14 +40,6 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
     }
     if(e->text().toStdString().compare("l") == 0){
         mgmt->printLinks();
-    }
-    if(e->text().toStdString().compare("r") == 0){
-        mgmt->readTopology();
-        repaint();
-        //cout << "rect->bottomLeft().x(): " << rect->bottomLeft().x() << " rect->bottomRight().x(): " << rect->bottomRight().x() << " rect->topLeft().y(): " << rect->topLeft().y() << " rect->bottomRight().y(): " << rect->bottomRight().y() << endl;
-    }
-    if(e->text().toStdString().compare("w") == 0){
-        mgmt->writeTopology();
     }
     if(e->text().toStdString().compare("p") == 0){
         repaint();
@@ -72,14 +66,18 @@ void MainWindow::myInit(){
     y = 1000;
     RECT_WIDTH = 50;
     RECT_HEIGHT = 50;
-    Y_OFFSET = 100;
-    X_OFFSET = 30;
-    X_MAX = 1100;
-    Y_MAX = 570;
+    X_OFFSET = 10;
+    Y_UPPER_OFFSET = 70;
+    Y_LOWER_OFFSET = 130;
+    X_MAX = width() - 2 * X_OFFSET;
+    Y_MAX = height() - Y_LOWER_OFFSET;
 }
 
 bool MainWindow::isInsideArea(){
-    if(((x > rect->bottomLeft().x() + RECT_WIDTH) && (x < rect->bottomRight().x() - RECT_WIDTH)) && ((y > rect->topLeft().y() + RECT_HEIGHT) && (y < rect->bottomLeft().y() - RECT_HEIGHT))){
+    if((x > rect->bottomLeft().x() + RECT_WIDTH)  &&
+       (x < rect->bottomRight().x() - RECT_WIDTH) &&
+       (y > rect->topLeft().y() + RECT_HEIGHT)    &&
+       (y < rect->bottomLeft().y() - RECT_HEIGHT)) {
         return true;
     }
     return false;
@@ -183,6 +181,21 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     }
 }
 
+void MainWindow::resizeEvent(QResizeEvent *e) {
+    myInit();
+    rect->setCoords(X_OFFSET,Y_UPPER_OFFSET,X_MAX,Y_MAX);
+    repaint();
+}
+
 void MainWindow::forceRepaint(){
+    repaint();
+}
+
+void MainWindow::saveEvent() {
+    mgmt->writeTopology();
+}
+
+void MainWindow::openEvent() {
+    mgmt->readTopology();
     repaint();
 }

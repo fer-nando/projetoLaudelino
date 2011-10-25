@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 private:
     QPixmap *pixmapSwitch, *pixmapRouter;
-    int x, y, X_MAX,Y_MAX, RECT_WIDTH, RECT_HEIGHT, X_OFFSET, Y_OFFSET;
+    int x, y, X_MAX, Y_MAX, RECT_WIDTH, RECT_HEIGHT, X_OFFSET, Y_UPPER_OFFSET, Y_LOWER_OFFSET;
     int pressedX, pressedY;
     bool moving;
     QRect *rect;
@@ -56,8 +56,11 @@ protected:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+    void resizeEvent(QResizeEvent *);
 private slots:
     void forceRepaint();
+    void openEvent();
+    void saveEvent();
 };
 
 #endif // MAINWINDOW_H

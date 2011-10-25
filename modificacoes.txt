@@ -23,6 +23,13 @@ Ou seja, o Read, presupoe que nao existe nenhum device na topologia. se vc remov
 -> Finalizados os signals que faltavam, que era só quando se inseria um link.
 -> Consertado a função 'Managment::existStrMismatch', havia um erro na comparação das interfaces (nunca inseria um Serial).
 
+######### 24/10 - Fernando ##########
+
+-> Modificado o layout do programa, conforme mostrei em sala
+-> Os botões de 'open' e 'save' estão funcionais, também substitui o atalho por 'Crtl+R' e 'Crtl+S'
+-> O redimensionamento também está funcionando, só não tratei caso haja dispositivos fora da nova área
+
+
 
 @@@@@@@@@@@@@@@@@@@@@ proximos passos @@@@@@@@@@@@@@@@@@@@@
 
