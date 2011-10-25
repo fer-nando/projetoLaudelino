@@ -39,12 +39,15 @@ private:
     int x, y, X_MAX, Y_MAX, RECT_WIDTH, RECT_HEIGHT, X_OFFSET, Y_UPPER_OFFSET, Y_LOWER_OFFSET;
     int pressedX, pressedY;
     bool moving;
+    bool flagSave;
     QRect *rect;
-    Device *moveDevice,*dev;
+    Device *moveDevice,*dev,*selectedDevice;
     DeviceWindow* deviceWindow;
     LinkWindow* linkWindow;
     Ui::MainWindow *ui;
     Management *mgmt;
+
+    void setupDeviceTab();
 public: 
     explicit MainWindow(QWidget *parent = 0);
     bool isInsideArea();
@@ -61,6 +64,7 @@ private slots:
     void forceRepaint();
     void openEvent();
     void saveEvent();
+    void editEvent();
 };
 
 #endif // MAINWINDOW_H

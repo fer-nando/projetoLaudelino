@@ -1,12 +1,12 @@
 Device
-10.10.10.10,hostname,Router,XXXX,238,240,50,50
+10.10.10.10,hostname,Router,XXXX,215,174,50,50
 Interface
 Fa0/0
 Device
-10.10.10.12,hostname2,Router,XXXX,498,180,50,50
+10.10.10.12,hostname2,Router,XXXX,519,215,50,50
 Interface
 Fa0/0
 Device
-10.10.10.15,hostname5,Router,XXXX,248,385,50,50
+10.10.10.13,hostname3,Router,XXXX,768,252,50,50
 Interface
 Fa0/0

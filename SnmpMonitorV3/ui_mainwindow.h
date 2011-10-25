@@ -20,9 +20,11 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #include <QtGui/QRadioButton>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QTabWidget>
+#include <QtGui/QTextEdit>
 #include <QtGui/QToolButton>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
@@ -43,7 +45,6 @@ public:
     QRadioButton *radioSwitch;
     QRadioButton *radioWire;
     QRadioButton *radioMove;
-    QRadioButton *radioEdit;
     QRadioButton *radioLink;
     QRadioButton *radioDel;
     QFrame *line;
@@ -58,9 +59,32 @@ public:
     QLabel *label_5;
     QLabel *label_6;
     QLabel *label_2;
+    QTextEdit *textEdit;
+    QTextEdit *textEdit_2;
+    QTextEdit *textEdit_3;
+    QTextEdit *textEdit_4;
+    QTextEdit *textEdit_5;
+    QTextEdit *textEdit_6;
     QSpacerItem *horizontalSpacer;
     QToolButton *toolGraph;
     QWidget *tab_2;
+    QHBoxLayout *horizontalLayout_4;
+    QGridLayout *gridLayout_3;
+    QLabel *label_18;
+    QTextEdit *hostnameEdit;
+    QTextEdit *ipEdit;
+    QLabel *label_13;
+    QLabel *label_15;
+    QLabel *label_14;
+    QTextEdit *typeEdit;
+    QTextEdit *serieEdit;
+    QGridLayout *gridLayout_8;
+    QLabel *label_16;
+    QTextEdit *interfaceEdit;
+    QLabel *label_35;
+    QTextEdit *label_warning;
+    QSpacerItem *horizontalSpacer_3;
+    QPushButton *editButton;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -147,29 +171,20 @@ public:
 
         horizontalLayout->addWidget(radioMove);
 
-        radioEdit = new QRadioButton(centralWidget);
-        radioEdit->setObjectName(QString::fromUtf8("radioEdit"));
-        QIcon icon6;
-        icon6.addFile(QString::fromUtf8("editDevice.png"), QSize(), QIcon::Normal, QIcon::Off);
-        radioEdit->setIcon(icon6);
-        radioEdit->setIconSize(QSize(36, 36));
-
-        horizontalLayout->addWidget(radioEdit);
-
         radioLink = new QRadioButton(centralWidget);
         radioLink->setObjectName(QString::fromUtf8("radioLink"));
-        QIcon icon7;
-        icon7.addFile(QString::fromUtf8("deleteWire.png"), QSize(), QIcon::Normal, QIcon::Off);
-        radioLink->setIcon(icon7);
+        QIcon icon6;
+        icon6.addFile(QString::fromUtf8("deleteWire.png"), QSize(), QIcon::Normal, QIcon::Off);
+        radioLink->setIcon(icon6);
         radioLink->setIconSize(QSize(36, 36));
 
         horizontalLayout->addWidget(radioLink);
 
         radioDel = new QRadioButton(centralWidget);
         radioDel->setObjectName(QString::fromUtf8("radioDel"));
-        QIcon icon8;
-        icon8.addFile(QString::fromUtf8("deleteDevice.png"), QSize(), QIcon::Normal, QIcon::Off);
-        radioDel->setIcon(icon8);
+        QIcon icon7;
+        icon7.addFile(QString::fromUtf8("deleteDevice.png"), QSize(), QIcon::Normal, QIcon::Off);
+        radioDel->setIcon(icon7);
         radioDel->setIconSize(QSize(36, 36));
 
         horizontalLayout->addWidget(radioDel);
@@ -209,44 +224,90 @@ public:
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         label = new QLabel(tab);
         label->setObjectName(QString::fromUtf8("label"));
-        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
         label->setSizePolicy(sizePolicy1);
-        label->setMinimumSize(QSize(150, 0));
+        label->setMinimumSize(QSize(100, 30));
 
         gridLayout->addWidget(label, 0, 0, 1, 1);
 
         label_3 = new QLabel(tab);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setMinimumSize(QSize(150, 0));
+        sizePolicy1.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
+        label_3->setSizePolicy(sizePolicy1);
+        label_3->setMinimumSize(QSize(100, 30));
 
         gridLayout->addWidget(label_3, 2, 0, 1, 1);
 
         label_4 = new QLabel(tab);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setMinimumSize(QSize(150, 0));
+        sizePolicy1.setHeightForWidth(label_4->sizePolicy().hasHeightForWidth());
+        label_4->setSizePolicy(sizePolicy1);
+        label_4->setMinimumSize(QSize(70, 30));
 
-        gridLayout->addWidget(label_4, 0, 1, 1, 1);
+        gridLayout->addWidget(label_4, 0, 2, 1, 1);
 
         label_5 = new QLabel(tab);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setMinimumSize(QSize(150, 0));
+        sizePolicy1.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy1);
+        label_5->setMinimumSize(QSize(70, 30));
 
-        gridLayout->addWidget(label_5, 1, 1, 1, 1);
+        gridLayout->addWidget(label_5, 1, 2, 1, 1);
 
         label_6 = new QLabel(tab);
         label_6->setObjectName(QString::fromUtf8("label_6"));
-        label_6->setMinimumSize(QSize(150, 0));
+        sizePolicy1.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
+        label_6->setSizePolicy(sizePolicy1);
+        label_6->setMinimumSize(QSize(70, 30));
 
-        gridLayout->addWidget(label_6, 2, 1, 1, 1);
+        gridLayout->addWidget(label_6, 2, 2, 1, 1);
 
         label_2 = new QLabel(tab);
         label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setMinimumSize(QSize(150, 0));
+        sizePolicy1.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
+        label_2->setSizePolicy(sizePolicy1);
+        label_2->setMinimumSize(QSize(100, 30));
 
         gridLayout->addWidget(label_2, 1, 0, 1, 1);
+
+        textEdit = new QTextEdit(tab);
+        textEdit->setObjectName(QString::fromUtf8("textEdit"));
+        textEdit->setMaximumSize(QSize(150, 30));
+
+        gridLayout->addWidget(textEdit, 0, 1, 1, 1);
+
+        textEdit_2 = new QTextEdit(tab);
+        textEdit_2->setObjectName(QString::fromUtf8("textEdit_2"));
+        textEdit_2->setMaximumSize(QSize(150, 30));
+
+        gridLayout->addWidget(textEdit_2, 1, 1, 1, 1);
+
+        textEdit_3 = new QTextEdit(tab);
+        textEdit_3->setObjectName(QString::fromUtf8("textEdit_3"));
+        textEdit_3->setMaximumSize(QSize(150, 30));
+
+        gridLayout->addWidget(textEdit_3, 2, 1, 1, 1);
+
+        textEdit_4 = new QTextEdit(tab);
+        textEdit_4->setObjectName(QString::fromUtf8("textEdit_4"));
+        textEdit_4->setMaximumSize(QSize(150, 30));
+
+        gridLayout->addWidget(textEdit_4, 0, 3, 1, 1);
+
+        textEdit_5 = new QTextEdit(tab);
+        textEdit_5->setObjectName(QString::fromUtf8("textEdit_5"));
+        textEdit_5->setMaximumSize(QSize(150, 30));
+
+        gridLayout->addWidget(textEdit_5, 1, 3, 1, 1);
+
+        textEdit_6 = new QTextEdit(tab);
+        textEdit_6->setObjectName(QString::fromUtf8("textEdit_6"));
+        textEdit_6->setMaximumSize(QSize(150, 30));
+
+        gridLayout->addWidget(textEdit_6, 2, 3, 1, 1);
 
 
         horizontalLayout_2->addLayout(gridLayout);
@@ -257,11 +318,8 @@ public:
 
         toolGraph = new QToolButton(tab);
         toolGraph->setObjectName(QString::fromUtf8("toolGraph"));
-        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(toolGraph->sizePolicy().hasHeightForWidth());
-        toolGraph->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(toolGraph->sizePolicy().hasHeightForWidth());
+        toolGraph->setSizePolicy(sizePolicy1);
         toolGraph->setMinimumSize(QSize(80, 50));
         toolGraph->setSizeIncrement(QSize(0, 0));
         QFont font;
@@ -277,6 +335,111 @@ public:
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
+        horizontalLayout_4 = new QHBoxLayout(tab_2);
+        horizontalLayout_4->setSpacing(6);
+        horizontalLayout_4->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        gridLayout_3 = new QGridLayout();
+        gridLayout_3->setSpacing(6);
+        gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
+        label_18 = new QLabel(tab_2);
+        label_18->setObjectName(QString::fromUtf8("label_18"));
+
+        gridLayout_3->addWidget(label_18, 1, 0, 1, 1);
+
+        hostnameEdit = new QTextEdit(tab_2);
+        hostnameEdit->setObjectName(QString::fromUtf8("hostnameEdit"));
+        sizePolicy1.setHeightForWidth(hostnameEdit->sizePolicy().hasHeightForWidth());
+        hostnameEdit->setSizePolicy(sizePolicy1);
+        hostnameEdit->setMaximumSize(QSize(200, 30));
+
+        gridLayout_3->addWidget(hostnameEdit, 0, 1, 1, 1);
+
+        ipEdit = new QTextEdit(tab_2);
+        ipEdit->setObjectName(QString::fromUtf8("ipEdit"));
+        sizePolicy1.setHeightForWidth(ipEdit->sizePolicy().hasHeightForWidth());
+        ipEdit->setSizePolicy(sizePolicy1);
+        ipEdit->setMaximumSize(QSize(200, 30));
+
+        gridLayout_3->addWidget(ipEdit, 1, 1, 1, 1);
+
+        label_13 = new QLabel(tab_2);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+
+        gridLayout_3->addWidget(label_13, 0, 0, 1, 1);
+
+        label_15 = new QLabel(tab_2);
+        label_15->setObjectName(QString::fromUtf8("label_15"));
+
+        gridLayout_3->addWidget(label_15, 2, 0, 1, 1);
+
+        label_14 = new QLabel(tab_2);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+
+        gridLayout_3->addWidget(label_14, 3, 0, 1, 1);
+
+        typeEdit = new QTextEdit(tab_2);
+        typeEdit->setObjectName(QString::fromUtf8("typeEdit"));
+        sizePolicy1.setHeightForWidth(typeEdit->sizePolicy().hasHeightForWidth());
+        typeEdit->setSizePolicy(sizePolicy1);
+        typeEdit->setMaximumSize(QSize(200, 30));
+
+        gridLayout_3->addWidget(typeEdit, 2, 1, 1, 1);
+
+        serieEdit = new QTextEdit(tab_2);
+        serieEdit->setObjectName(QString::fromUtf8("serieEdit"));
+        sizePolicy1.setHeightForWidth(serieEdit->sizePolicy().hasHeightForWidth());
+        serieEdit->setSizePolicy(sizePolicy1);
+        serieEdit->setMaximumSize(QSize(200, 30));
+
+        gridLayout_3->addWidget(serieEdit, 3, 1, 1, 1);
+
+
+        horizontalLayout_4->addLayout(gridLayout_3);
+
+        gridLayout_8 = new QGridLayout();
+        gridLayout_8->setSpacing(6);
+        gridLayout_8->setObjectName(QString::fromUtf8("gridLayout_8"));
+        label_16 = new QLabel(tab_2);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+
+        gridLayout_8->addWidget(label_16, 0, 0, 1, 1);
+
+        interfaceEdit = new QTextEdit(tab_2);
+        interfaceEdit->setObjectName(QString::fromUtf8("interfaceEdit"));
+        sizePolicy1.setHeightForWidth(interfaceEdit->sizePolicy().hasHeightForWidth());
+        interfaceEdit->setSizePolicy(sizePolicy1);
+        interfaceEdit->setMaximumSize(QSize(200, 120));
+
+        gridLayout_8->addWidget(interfaceEdit, 0, 1, 1, 1);
+
+        label_35 = new QLabel(tab_2);
+        label_35->setObjectName(QString::fromUtf8("label_35"));
+
+        gridLayout_8->addWidget(label_35, 0, 2, 1, 1);
+
+        label_warning = new QTextEdit(tab_2);
+        label_warning->setObjectName(QString::fromUtf8("label_warning"));
+        sizePolicy1.setHeightForWidth(label_warning->sizePolicy().hasHeightForWidth());
+        label_warning->setSizePolicy(sizePolicy1);
+        label_warning->setMaximumSize(QSize(200, 120));
+        label_warning->setReadOnly(true);
+
+        gridLayout_8->addWidget(label_warning, 0, 3, 1, 1);
+
+
+        horizontalLayout_4->addLayout(gridLayout_8);
+
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_4->addItem(horizontalSpacer_3);
+
+        editButton = new QPushButton(tab_2);
+        editButton->setObjectName(QString::fromUtf8("editButton"));
+        editButton->setMinimumSize(QSize(50, 40));
+
+        horizontalLayout_4->addWidget(editButton);
+
         tabWidget->addTab(tab_2, QString());
 
         verticalLayout->addWidget(tabWidget);
@@ -302,7 +465,6 @@ public:
         radioSwitch->setText(QApplication::translate("MainWindow", "Switch", 0, QApplication::UnicodeUTF8));
         radioWire->setText(QApplication::translate("MainWindow", "Wire", 0, QApplication::UnicodeUTF8));
         radioMove->setText(QApplication::translate("MainWindow", "Move", 0, QApplication::UnicodeUTF8));
-        radioEdit->setText(QApplication::translate("MainWindow", "EditDevice", 0, QApplication::UnicodeUTF8));
         radioLink->setText(QApplication::translate("MainWindow", "removeLink", 0, QApplication::UnicodeUTF8));
         radioDel->setText(QApplication::translate("MainWindow", "DeleteDevice", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Hostname:", 0, QApplication::UnicodeUTF8));
@@ -310,9 +472,16 @@ public:
         label_4->setText(QApplication::translate("MainWindow", "Uptime:", 0, QApplication::UnicodeUTF8));
         label_5->setText(QApplication::translate("MainWindow", "BytesIn:", 0, QApplication::UnicodeUTF8));
         label_6->setText(QApplication::translate("MainWindow", "BytesOut:", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("MainWindow", "Ip:", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("MainWindow", "IPv4:", 0, QApplication::UnicodeUTF8));
         toolGraph->setText(QApplication::translate("MainWindow", "Graph", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Status", 0, QApplication::UnicodeUTF8));
+        label_18->setText(QApplication::translate("MainWindow", "IPv4:", 0, QApplication::UnicodeUTF8));
+        label_13->setText(QApplication::translate("MainWindow", "Hostname:", 0, QApplication::UnicodeUTF8));
+        label_15->setText(QApplication::translate("MainWindow", "Type:", 0, QApplication::UnicodeUTF8));
+        label_14->setText(QApplication::translate("MainWindow", "Serie:", 0, QApplication::UnicodeUTF8));
+        label_16->setText(QApplication::translate("MainWindow", "Interfaces:", 0, QApplication::UnicodeUTF8));
+        label_35->setText(QApplication::translate("MainWindow", "Warning:", 0, QApplication::UnicodeUTF8));
+        editButton->setText(QApplication::translate("MainWindow", "Save", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Edit", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 

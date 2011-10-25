@@ -28,8 +28,8 @@ public:
     bool rectCollision(int x, int y, int height, int width);
     bool removeLink(Device *dev1, Interface* intf1, Device* dev2, Interface* intf2);
     bool existInterface(Device* dev, Interface* intf);
-    bool existHostname(string hostname);
-    bool existIP(string ip);
+    bool existHostname(string hostname, string old_hostname = "");
+    bool existIP(string ip, string old_ip = "");
     bool existStrLinkMismatch(Interface *intf1,Interface* intf2);
     void verifyRedundantLink(Link *l);
     void setManagement(Management* mgmt);

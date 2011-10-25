@@ -205,9 +205,12 @@ bool Management::existInterface(Device* dev, Interface* intf){
     return false;
 }
 
-bool Management::existHostname(string hostname){
+bool Management::existHostname(string hostname, string old_hostname){
     vector<Device*>::iterator it;
     for(it = devices.begin();it!= devices.end();++it){
+        if(old_hostname.compare((*it)->getHostname()) == 0) {
+            continue;
+        }
         if(((*it)->getHostname().compare(hostname)) == 0){ // se ja existe algum host
             return true;
         }
@@ -296,9 +299,12 @@ bool Management::rectCollision(int x, int y, int height, int width){
     return false;
 }
 
-bool Management::existIP(string ip){
+bool Management::existIP(string ip, string old_ip){
     vector<Device*>::iterator it;
     for(it = devices.begin(); it!=devices.end(); ++it){
+        if(old_ip.compare((*it)->getIp()) == 0) {
+            continue;
+        }
         if(ip.compare((*it)->getIp()) == 0){
                return true;
         }

@@ -47,7 +47,7 @@ void LinkWindow::on_buttonBoxOk(){
         emit windowClosed();
         this->close();
     }else{
-        ui->textWarning->setText("Error: remove link mismatch!");
+        ui->textWarning->setText("Error: link mismatch!");
     }
 }
 

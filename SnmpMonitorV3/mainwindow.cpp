@@ -10,8 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent),ui(new Ui::MainWind
     pixmapSwitch = new QPixmap("switch.png");
     pixmapRouter = new QPixmap("router.png");
 
+    flagSave = false;
+
     connect(ui->toolOpen, SIGNAL(clicked()), this, SLOT(openEvent()));
     connect(ui->toolSave, SIGNAL(clicked()), this, SLOT(saveEvent()));
+    connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editEvent()));
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e){
@@ -68,7 +71,7 @@ void MainWindow::myInit(){
     RECT_HEIGHT = 50;
     X_OFFSET = 10;
     Y_UPPER_OFFSET = 70;
-    Y_LOWER_OFFSET = 130;
+    Y_LOWER_OFFSET = 210;
     X_MAX = width() - 2 * X_OFFSET;
     Y_MAX = height() - Y_LOWER_OFFSET;
 }
@@ -131,21 +134,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     y = event->y();
    // cout  << "x: " << x << " y: " << y << endl;
     dev = mgmt->verifyClickCollision(x,y); // verifica se o click colidiu com algum device, se colidiu a variavel dev ja recebe o ponteiro!
-    if(event->button() == Qt::RightButton){
-        cout << "right click at: " << dev->getHostname() << " GERAR GRAFICO!" << endl;
-    }
-    if(ui->radioEdit->isChecked()){
-        //mgmt->printRect();
-        if(dev != 0){
-            deviceWindow = new DeviceWindow();
-            deviceWindow->setDevice(dev);
-            deviceWindow->setManagement(mgmt);
-            deviceWindow->setIsEdit(true);
-            deviceWindow->afterConstructor(); // para ajustar o nome do device na janela, ja q eh um edit!
-            deviceWindow->show();
-            repaint();
-        }
-    }if(ui->radioDel->isChecked()){
+
+    selectedDevice = dev;
+    setupDeviceTab();
+
+    if(ui->radioDel->isChecked()){
         if(dev != 0){
             mgmt->removeDevice(dev);
             repaint();
@@ -187,15 +180,106 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     repaint();
 }
 
+void MainWindow::setupDeviceTab() {
+    if(selectedDevice != 0) {
+        QString str = "";
+
+        ui->hostnameEdit->setText(QString::fromStdString(selectedDevice->getHostname()));
+        ui->ipEdit->setText(QString::fromStdString(selectedDevice->getIp()));
+        ui->typeEdit->setText(QString::fromStdString(selectedDevice->getType()));
+        ui->serieEdit->setText(QString::fromStdString(selectedDevice->getSerie()));
+        for(vector<Interface*>::iterator it = selectedDevice->getInterfaces().begin(); it != selectedDevice->getInterfaces().end(); ++ it){
+            QString strTemp = QString::fromStdString((*it)->getName());
+            strTemp.append("\n");
+            str.append(strTemp);
+        }
+        ui->interfaceEdit->setText(str);
+
+    }
+    else {
+        ui->hostnameEdit->clear();
+        ui->ipEdit->clear();
+        ui->typeEdit->clear();
+        ui->serieEdit->clear();
+        ui->interfaceEdit->clear();
+        ui->label_warning->clear();
+    }
+}
+
+/* SLOTS */
+
+void MainWindow::editEvent(){
+    bool thereIsAnyError = false; // FLAG
+    QString warningStr("");
+    string serie = ui->serieEdit->toPlainText().toStdString();
+    string type = ui->typeEdit->toPlainText().toStdString();
+    string ip = ui->ipEdit->toPlainText().toStdString();
+    string hostname = ui->hostnameEdit->toPlainText().toStdString();
+    ui->label_warning->clear();
+
+    if(mgmt->existHostname(hostname, selectedDevice->getHostname())) {
+        thereIsAnyError = true;
+        ui->label_warning->setText("Duplicated host name!");
+    }
+    QString qstr = ui->interfaceEdit->toPlainText();
+    QStringList qsltr = qstr.split("\n");
+    QStringList::const_iterator constIterator;
+    for (constIterator = qsltr.constBegin(); constIterator != qsltr.constEnd(); ++constIterator){
+            qstr = (*constIterator).toLocal8Bit().constData();
+            if(qstr.toStdString().size() >= 5){ // pog p/ evitar o "";
+                Interface *intf = new Interface(qstr.toStdString(),mgmt->subStrInterfaceType(qstr.toStdString()));
+                if(mgmt->regexInterfaceName(intf)){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS! e faz o regex!
+                    if(!(mgmt->existInterface(selectedDevice,intf))){
+                        selectedDevice->addIntf(intf);
+                    }
+                }else{
+                    thereIsAnyError = true;
+                    warningStr = "Interface name error: ";
+                    warningStr.append(QString::fromStdString(intf->getName()));
+                    ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append("\n"));
+                    cout << "Warning: " << warningStr.toStdString()<< endl;
+                    delete intf;
+                }
+            }
+    }
+    // VERIFICA SE EH SWITCH OU ROUTER
+    if(( type.compare("Router")!=0 && type.compare("Switch")!=0)){
+        thereIsAnyError = true;
+        warningStr = "Type name error: ";
+        ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->typeEdit->toPlainText()));
+    }
+    if(!mgmt->regexIP(ip) || mgmt->existIP(ip)){ // se nao passou passou pelo regex || se existe o ip
+        if(mgmt->existIP(ip, selectedDevice->getIp())){ // se ja existia alguem
+            thereIsAnyError = true;
+            warningStr.append("IP duplicated error: ");
+            ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->ipEdit->toPlainText()));
+        }else if(!mgmt->regexIP(ip)){ // se nao passou pelo regex
+            thereIsAnyError = true;
+            warningStr.append("IP error: ");
+            ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->ipEdit->toPlainText()));
+        }
+    }
+    if(!thereIsAnyError){
+        selectedDevice->setHostname(hostname);
+        selectedDevice->setIp(ip);
+        selectedDevice->setSerie(serie);
+        selectedDevice->setType(type);
+        repaint();
+    }
+}
+
 void MainWindow::forceRepaint(){
     repaint();
 }
 
 void MainWindow::saveEvent() {
     mgmt->writeTopology();
+    flagSave = true;
 }
 
 void MainWindow::openEvent() {
-    mgmt->readTopology();
-    repaint();
+    if(!flagSave) {
+        mgmt->readTopology();
+        repaint();
+    }
 }
