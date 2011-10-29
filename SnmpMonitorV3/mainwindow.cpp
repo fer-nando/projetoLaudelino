@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent),ui(new Ui::MainWind
     connect(ui->toolOpen, SIGNAL(clicked()), this, SLOT(openEvent()));
     connect(ui->toolSave, SIGNAL(clicked()), this, SLOT(saveEvent()));
     connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editEvent()));
+    connect(ui->toolKill, SIGNAL(clicked()),this , SLOT(killTopologyEvent()));
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e){
@@ -269,6 +270,12 @@ void MainWindow::editEvent(){
 }
 
 void MainWindow::forceRepaint(){
+    repaint();
+}
+
+void MainWindow::killTopologyEvent() {
+    flagSave = false;
+    mgmt->killTopology();
     repaint();
 }
 

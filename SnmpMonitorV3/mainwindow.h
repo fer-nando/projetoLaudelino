@@ -65,6 +65,7 @@ private slots:
     void openEvent();
     void saveEvent();
     void editEvent();
+    void killTopologyEvent();
 };
 
 #endif // MAINWINDOW_H

@@ -256,6 +256,18 @@ void Management::move(Device* dev, int pressedX, int pressedY, int x, int y){
     dev->setPos(pressedX - x, pressedY - y);
 }
 
+void Management::killTopology(){
+    vector<Device*>::iterator it;
+    while(true){
+        for(it = devices.begin(); it!=devices.end(); ++it){
+            removeDevice((*it)); // se essa funcao for chamada em sequencia, dentro de um for da erro unexpected, acredito que seja o erase do vector.
+            break;
+        }
+        if(devices.size() == 0)
+        break;
+    }
+}
+
 // funcao que apaga todas os links de um device!
 void Management::removeDevice(Device* dev){
     vector<Device*>::iterator it;

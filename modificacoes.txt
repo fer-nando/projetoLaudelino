@@ -35,9 +35,13 @@ Ou seja, o Read, presupoe que nao existe nenhum device na topologia. se vc remov
 -> Editar funcionando
 -> Bugs de editar consertados
 
+######## 25/10 - Arcanjo ########
+
+-> Implementado botao 'kill' em Management acrescentado a funcao void Management::killTopology e ajustado a flag para gravar e escrita.
+-> Adicionado em MainWindow o slot killTopologyEvent();
+
 
 @@@@@@@@@@@@@@@@@@@@@ proximos passos @@@@@@@@@@@@@@@@@@@@@
 
 -> Aprender a fazer um grafico, usando qwt. (já fiz um teste, temos que ver um método que os dois consigam compilar)
 -> Depois q os graficos estiverem prontos para os parametros do eixo x, eixo y, integramos com o script (qndo chegar nesse momento eu te passo o programa de simulacao de redes e o scripts para pode testar e fazer as paradas neste ponto a gente volta pra biblioteca).
--> Botão limpar topologia e ajustar 'flagSave'

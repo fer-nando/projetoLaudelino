@@ -2,4 +2,8 @@ SnmpMonitorV3-build-desktp/
 SnmpMonitorV3-build-desktop/*
 *.bak
 *.tar.gz
+*.tar
 *.*~
+*.o
+moc_*
+ui_*

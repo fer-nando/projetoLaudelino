@@ -36,6 +36,7 @@ public:
     void printDefault();
     void printRect();
     void printLinks();
+    void killTopology();
     void writeTopology();
     void readTopology();
     void createLink(Device *dev1, Interface *intf1, Device *dev2, Interface *intf2);
