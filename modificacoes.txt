@@ -40,6 +40,12 @@ Ou seja, o Read, presupoe que nao existe nenhum device na topologia. se vc remov
 -> Implementado botao 'kill' em Management acrescentado a funcao void Management::killTopology e ajustado a flag para gravar e escrita.
 -> Adicionado em MainWindow o slot killTopologyEvent();
 
+######## 29/10 - Fernando #######
+
+-> Implementada a tab 'Status'.
+-> Configuracao da cor dos links de acordo com o status dos devices.
+-> Removida a funcao 'setInterfaceWired()' e implementada 'getInterface(string)' para corrigir oo  ponteiro errado dos links.
+
 
 @@@@@@@@@@@@@@@@@@@@@ proximos passos @@@@@@@@@@@@@@@@@@@@@
 

@@ -24,12 +24,15 @@ void LinkWindow::on_buttonBoxOk(){
     bool willRemove = true;
     ui->textWarning->clear();
     if(ui->comboIntf1->currentText().compare("") != 0 && ui->comboIntf2->currentText().compare("") != 0){ // evitar texto null
-        intf1 = new Interface(ui->comboIntf1->currentText().toStdString(),mgmt->subStrInterfaceType(ui->comboIntf1->currentText().toStdString()));
-        intf2 = new Interface(ui->comboIntf2->currentText().toStdString(),mgmt->subStrInterfaceType(ui->comboIntf2->currentText().toStdString()));
+        intf1 = dev1->getInterface( ui->comboIntf1->currentText().toStdString() );
+        intf2 = dev2->getInterface( ui->comboIntf2->currentText().toStdString() );
+
+        //intf1 = new Interface(ui->comboIntf1->currentText().toStdString(),mgmt->subStrInterfaceType(ui->comboIntf1->currentText().toStdString()));
+        //intf2 = new Interface(ui->comboIntf2->currentText().toStdString(),mgmt->subStrInterfaceType(ui->comboIntf2->currentText().toStdString()));
         if(!mgmt->existStrLinkMismatch(intf1,intf2)){
             if(!removeLink){ // se NAO esta no modo remove!
-                dev1->setInterfaceWired(intf1,true);
-                dev2->setInterfaceWired(intf2,true);
+                intf1->setWired(true);
+                intf2->setWired(true);
                 mgmt->createLink(dev1,intf1,dev2,intf2);
                 dev1->addDev(intf1,dev2); // para mostrar adj dps
                 dev2->addDev(intf2,dev1); // para mostrar adj dps

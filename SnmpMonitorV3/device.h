@@ -18,7 +18,7 @@ private:
     vector<Interface*> interfaces;
 public:
     Device(string ip, string hostname,string type,string serie,int x, int y, int height, int width);
-    void setInterfaceWired(Interface*,bool);
+    //void setInterfaceWired(Interface*,bool);
     void setPos(int x, int y);
     void setIp(string ip);
     void setHostname(string hostname);
@@ -37,6 +37,7 @@ public:
     string getUpTime();
     string getType();
     string getSerie();
+    Interface * getInterface(string name);
     vector<Interface*>& getInterfaces();
     QRect* getRect();
 };

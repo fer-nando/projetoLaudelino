@@ -132,8 +132,6 @@ void Management::readTopology(){
                      }
                      Device *dev1,*dev2;
                      Interface *intf1,*intf2;
-                     intf1 = new Interface(array[1],subStrInterfaceType(array[1]));
-                     intf2 = new Interface(array[3],subStrInterfaceType(array[3]));
                      vector<Device*>::iterator itt;
                      for(itt = devices.begin();itt!=devices.end();++itt){
                          cout << (*itt)->getHostname() << endl;
@@ -143,8 +141,10 @@ void Management::readTopology(){
                              dev2 = *(itt);
                          }
                      }
-                     dev1->setInterfaceWired(intf1,true);
-                     dev2->setInterfaceWired(intf2,true);
+                     intf1 = dev1->getInterface(array[1]);
+                     intf1->setWired(true);
+                     intf2 = dev2->getInterface(array[3]);
+                     intf2->setWired(true);
                      dev1->addDev(intf1,dev2); // para mostrar adj dps
                      dev2->addDev(intf2,dev1); // para mostrar adj dps
                      createLink(dev1,intf1,dev2,intf2);
@@ -288,8 +288,8 @@ bool Management::removeLinkFrom(Device *dev){
     for( i= links.begin(); i!=links.end(); ++i){
         // se o device esta em alguma das DUAS pontas do link... APAGUE ESTE LINK!
         if( (dev->getHostname().compare(((*i)->getDev1())->getHostname()) == 0) || (dev->getHostname().compare(((*i)->getDev2())->getHostname()) == 0)){
-                (*i)->getDev1()->setInterfaceWired((*i)->getIntf1(),false);
-                (*i)->getDev2()->setInterfaceWired((*i)->getIntf2(),false);
+                (*i)->getIntf1()->setWired(false);
+                (*i)->getIntf1()->setWired(false);
                 links.erase(i);
                 return true;
         }
@@ -333,8 +333,8 @@ bool Management::removeLink(Device *dev1, Interface* intf1, Device* dev2, Interf
         if(((dev1->getHostname().compare((*it)->getDev1()->getHostname()) == 0) && (dev2->getHostname().compare((*it)->getDev2()->getHostname())) == 0)){
             if(((intf1->getName().compare((*it)->getIntf1()->getName()) == 0) && (intf2->getName().compare((*it)->getIntf2()->getName())) == 0)){
                 //cout << "first:" << dev1->find(intf1) << endl;
-                dev1->setInterfaceWired(intf1,false); // setta a interface como NAO CONECTADA
-                dev2->setInterfaceWired(intf2,false); // setta a interface como NAO CONECTADA
+                intf1->setWired(false); // setta a interface como NAO CONECTADA
+                intf2->setWired(false); // setta a interface como NAO CONECTADA
                 links.erase(it);
                 return true;
             }
@@ -342,8 +342,8 @@ bool Management::removeLink(Device *dev1, Interface* intf1, Device* dev2, Interf
         if(((dev2->getHostname().compare((*it)->getDev1()->getHostname()) == 0) && (dev1->getHostname().compare((*it)->getDev2()->getHostname()))==0)){
             if(((intf2->getName().compare((*it)->getIntf1()->getName()) == 0) && (intf1->getName().compare((*it)->getIntf2()->getName())) == 0)){
                 //cout << "second: " << dev2->find(intf2) << endl;
-                dev1->setInterfaceWired(intf1,false); // setta a interface como NAO CONECTADA
-                dev2->setInterfaceWired(intf2,false); // setta a interface como NAO CONECTADA
+                intf1->setWired(false); // setta a interface como NAO CONECTADA
+                intf2->setWired(false); // setta a interface como NAO CONECTADA
                 links.erase(it);
                 return true;
             }

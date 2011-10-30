@@ -19,7 +19,7 @@ void Device::printDefault(){
     cout << "\t print Default device - end " << endl;
     cout << endl;
 }
-
+/*
 void Device::setInterfaceWired(Interface *intf, bool wired){
     for(vector<Interface*>::iterator it = interfaces.begin(); it != interfaces.end(); ++ it){
         if((*it)->getName().compare(intf->getName()) == 0){
@@ -28,7 +28,7 @@ void Device::setInterfaceWired(Interface *intf, bool wired){
         }
     }
 }
-
+*/
 void Device::printInterfaces(){
     cout << "\t Interfaces: " << endl;
     for(vector<Interface*>::iterator it = interfaces.begin(); it != interfaces.end(); ++ it){
@@ -111,6 +111,14 @@ string Device::getType(){
 
 string Device::getSerie(){
     return serie;
+}
+
+Interface * Device::getInterface(string name) {
+    for(vector<Interface*>::iterator it = interfaces.begin(); it != interfaces.end(); ++ it){
+        if((*it)->getName().compare(name) == 0){
+            return (*it);
+        }
+    }
 }
 
 vector<Interface*>& Device::getInterfaces(){

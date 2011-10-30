@@ -10,6 +10,7 @@
 #include <QPixmap>
 #include <QColor>
 #include <QPen>
+#include <QLabel>
 #include <QPoint>
 #include <QKeyEvent>
 #include <QString>
@@ -46,6 +47,7 @@ private:
     LinkWindow* linkWindow;
     Ui::MainWindow *ui;
     Management *mgmt;
+    vector<QLabel*> label_Intf;
 
     void setupDeviceTab();
 public: 

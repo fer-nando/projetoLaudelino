@@ -48,6 +48,19 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
     if(e->text().toStdString().compare("p") == 0){
         repaint();
     }
+    if(e->text().toStdString().compare("b") == 0){
+        if(selectedDevice != 0) {
+            for(vector<Interface*>::iterator it = selectedDevice->getInterfaces().begin(); it != selectedDevice->getInterfaces().end(); ++it){
+                if((*it)->getStatus() == 2) {
+                    (*it)->setStatus(1);
+                }
+                else {
+                    (*it)->setStatus(2);
+                }
+            }
+            repaint();
+        }
+    }
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *e){
@@ -107,7 +120,14 @@ void MainWindow::paintEvent(QPaintEvent *event){
          st.append(QString::fromStdString((*it)->getIntf2()->getName()));
          pt.setX((((*it)->getDev1())->getRect()->x()+((*it)->getDev2())->getRect()->x())/2 + 20 + (*it)->getLineDeltaX());
          pt.setY((((*it)->getDev1())->getRect()->y()+((*it)->getDev2())->getRect()->y())/2 + 20 + (*it)->getLineDeltaY());
-         painter.setPen(QPen(Qt::green,3));
+
+         cout << "Intf1 = " << (*it)->getIntf1()->getStatus() << ", Intf2 = " << (*it)->getIntf2()->getStatus() << endl;
+         if((*it)->getIntf1()->getStatus() == 2 && (*it)->getIntf2()->getStatus() == 2) {
+            painter.setPen(QPen(Qt::green,3));
+         }
+         else {
+            painter.setPen(QPen(Qt::red,3));
+         }
          path.moveTo(((*it)->getDev1())->getRect()->center());
          path.cubicTo((((*it)->getDev1())->getRect()->center()),pt,(((*it)->getDev2())->getRect()->center()));
          painter.drawPath(path);
@@ -136,6 +156,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
    // cout  << "x: " << x << " y: " << y << endl;
     dev = mgmt->verifyClickCollision(x,y); // verifica se o click colidiu com algum device, se colidiu a variavel dev ja recebe o ponteiro!
 
+    if(selectedDevice != dev && dev != 0) { // se um novo dispositivo foi selecionado, limpa os campos antes de preencher novamente
+        selectedDevice = 0;
+        setupDeviceTab();
+    }
     selectedDevice = dev;
     setupDeviceTab();
 
@@ -158,18 +182,18 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     if(ui->radioRouter->isChecked() || ui->radioSwitch->isChecked()){
          if(isInsideArea()){ // ta dentro da area
              if(!(mgmt->rectCollision(x,y,RECT_HEIGHT,RECT_WIDTH))){ // o click nao colidiu com nenhum no existe
-                     deviceWindow = new DeviceWindow();
-                     deviceWindow->setManagement(mgmt);
-                     if(ui->radioRouter->isChecked()){ // setar a string padrao e criar o desenho com o "Type" correto!
-                         deviceWindow->setType("Router");
-                         deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","Router","1841",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
-                     }else{
-                         deviceWindow->setType("Switch");
-                         deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","Switch","2960",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
-                     }
-                     deviceWindow->show();
-                     //repaint(); // sem isso evita que pinte antes de saber se clicou em 'ok' ou 'cancel'
-                     connect(deviceWindow, SIGNAL(windowClosed()), this, SLOT(forceRepaint()));
+                 deviceWindow = new DeviceWindow();
+                 deviceWindow->setManagement(mgmt);
+                 if(ui->radioRouter->isChecked()){ // setar a string padrao e criar o desenho com o "Type" correto!
+                     deviceWindow->setType("Router");
+                     deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","Router","1841",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
+                 }else{
+                     deviceWindow->setType("Switch");
+                     deviceWindow->setDevice(mgmt->createDevice("255.255.255.255","","Switch","2960",x,y,RECT_HEIGHT,RECT_WIDTH)); // cria um device padrao!
+                 }
+                 deviceWindow->show();
+                 //repaint(); // sem isso evita que pinte antes de saber se clicou em 'ok' ou 'cancel'
+                 connect(deviceWindow, SIGNAL(windowClosed()), this, SLOT(forceRepaint()));
              }
          }
     }
@@ -184,6 +208,74 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
 void MainWindow::setupDeviceTab() {
     if(selectedDevice != 0) {
         QString str = "";
+        int row = 1;
+
+        ui->label_hostname->setText(QString::fromStdString(selectedDevice->getHostname()));
+        ui->label_ip->setText(QString::fromStdString(selectedDevice->getIp()));
+        ui->label_type->setText(QString::fromStdString(selectedDevice->getType()));
+        ui->label_serie->setText(QString::fromStdString(selectedDevice->getSerie()));
+        for(vector<Interface*>::iterator it = selectedDevice->getInterfaces().begin(); it != selectedDevice->getInterfaces().end(); ++ it){
+            QLabel * labelTemp;
+            QString strTemp;
+            bool isNew;
+
+            strTemp = QString::fromStdString((*it)->getName());
+            if(label_Intf.size() >= row*5 && strTemp.compare( label_Intf.at( (row-1)*5 )->text() ) == 0) {
+                isNew = false;
+            }
+            else {
+                isNew = true;
+            }
+
+            // se é uma interface nova, adiciona novos elementos no grid
+            if(isNew) {
+                labelTemp = new QLabel(ui->tab);
+                labelTemp->setText(strTemp);
+                ui->gridLayout_4->addWidget(labelTemp, row, 0, 1, 1);
+                label_Intf.push_back(labelTemp);
+
+                strTemp = QString::number((*it)->getStatus());
+                labelTemp = new QLabel(ui->tab);
+                labelTemp->setText(strTemp);
+                ui->gridLayout_4->addWidget(labelTemp, row, 1, 1, 1);
+                label_Intf.push_back(labelTemp);
+
+                strTemp = QString::fromStdString((*it)->getWired() ? "yes" : "no");
+                labelTemp = new QLabel(ui->tab);
+                labelTemp->setText(strTemp);
+                ui->gridLayout_4->addWidget(labelTemp, row, 2, 1, 1);
+                label_Intf.push_back(labelTemp);
+
+                strTemp = QString::number((*it)->getBytesIn());
+                labelTemp = new QLabel(ui->tab);
+                labelTemp->setText(strTemp);
+                ui->gridLayout_4->addWidget(labelTemp, row, 3, 1, 1);
+                label_Intf.push_back(labelTemp);
+
+                strTemp = QString::number((*it)->getBytesOut());
+                labelTemp = new QLabel(ui->tab);
+                labelTemp->setText(strTemp);
+                ui->gridLayout_4->addWidget(labelTemp, row, 4, 1, 1);
+                label_Intf.push_back(labelTemp);
+            }
+            else { // senao, somente atualiza os campos
+                label_Intf.at( (row-1)*5 )->setText(strTemp);
+
+                strTemp = QString::number((*it)->getStatus());
+                label_Intf.at( (row-1)*5+1 )->setText(strTemp);
+
+                strTemp = QString::fromStdString((*it)->getWired() ? "yes" : "no");
+                label_Intf.at( (row-1)*5+2 )->setText(strTemp);
+
+                strTemp = QString::number((*it)->getBytesIn());
+                label_Intf.at( (row-1)*5+3 )->setText(strTemp);
+
+                strTemp = QString::number((*it)->getBytesOut());
+                label_Intf.at( (row-1)*5+4 )->setText(strTemp);
+            }
+
+            row++;
+        }
 
         ui->hostnameEdit->setText(QString::fromStdString(selectedDevice->getHostname()));
         ui->ipEdit->setText(QString::fromStdString(selectedDevice->getIp()));
@@ -198,6 +290,13 @@ void MainWindow::setupDeviceTab() {
 
     }
     else {
+        for(int i = 0; i < label_Intf.size(); i++) {
+            label_Intf.at(i)->clear();
+            ui->gridLayout_4->removeWidget(label_Intf.at(i));
+            delete label_Intf.at(i);
+        }
+        label_Intf.clear();
+
         ui->hostnameEdit->clear();
         ui->ipEdit->clear();
         ui->typeEdit->clear();
@@ -210,62 +309,65 @@ void MainWindow::setupDeviceTab() {
 /* SLOTS */
 
 void MainWindow::editEvent(){
-    bool thereIsAnyError = false; // FLAG
-    QString warningStr("");
-    string serie = ui->serieEdit->toPlainText().toStdString();
-    string type = ui->typeEdit->toPlainText().toStdString();
-    string ip = ui->ipEdit->toPlainText().toStdString();
-    string hostname = ui->hostnameEdit->toPlainText().toStdString();
-    ui->label_warning->clear();
+    if(selectedDevice != 0) {
+        bool thereIsAnyError = false; // FLAG
+        QString warningStr("");
+        string serie = ui->serieEdit->toPlainText().toStdString();
+        string type = ui->typeEdit->toPlainText().toStdString();
+        string ip = ui->ipEdit->toPlainText().toStdString();
+        string hostname = ui->hostnameEdit->toPlainText().toStdString();
+        ui->label_warning->clear();
 
-    if(mgmt->existHostname(hostname, selectedDevice->getHostname())) {
-        thereIsAnyError = true;
-        ui->label_warning->setText("Duplicated host name!");
-    }
-    QString qstr = ui->interfaceEdit->toPlainText();
-    QStringList qsltr = qstr.split("\n");
-    QStringList::const_iterator constIterator;
-    for (constIterator = qsltr.constBegin(); constIterator != qsltr.constEnd(); ++constIterator){
-            qstr = (*constIterator).toLocal8Bit().constData();
-            if(qstr.toStdString().size() >= 5){ // pog p/ evitar o "";
-                Interface *intf = new Interface(qstr.toStdString(),mgmt->subStrInterfaceType(qstr.toStdString()));
-                if(mgmt->regexInterfaceName(intf)){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS! e faz o regex!
-                    if(!(mgmt->existInterface(selectedDevice,intf))){
-                        selectedDevice->addIntf(intf);
-                    }
-                }else{
-                    thereIsAnyError = true;
-                    warningStr = "Interface name error: ";
-                    warningStr.append(QString::fromStdString(intf->getName()));
-                    ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append("\n"));
-                    cout << "Warning: " << warningStr.toStdString()<< endl;
-                    delete intf;
-                }
-            }
-    }
-    // VERIFICA SE EH SWITCH OU ROUTER
-    if(( type.compare("Router")!=0 && type.compare("Switch")!=0)){
-        thereIsAnyError = true;
-        warningStr = "Type name error: ";
-        ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->typeEdit->toPlainText()));
-    }
-    if(!mgmt->regexIP(ip) || mgmt->existIP(ip)){ // se nao passou passou pelo regex || se existe o ip
-        if(mgmt->existIP(ip, selectedDevice->getIp())){ // se ja existia alguem
+        if(mgmt->existHostname(hostname, selectedDevice->getHostname())) {
             thereIsAnyError = true;
-            warningStr.append("IP duplicated error: ");
-            ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->ipEdit->toPlainText()));
-        }else if(!mgmt->regexIP(ip)){ // se nao passou pelo regex
-            thereIsAnyError = true;
-            warningStr.append("IP error: ");
-            ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->ipEdit->toPlainText()));
+            ui->label_warning->setText("Duplicated host name!");
         }
-    }
-    if(!thereIsAnyError){
-        selectedDevice->setHostname(hostname);
-        selectedDevice->setIp(ip);
-        selectedDevice->setSerie(serie);
-        selectedDevice->setType(type);
-        repaint();
+        QString qstr = ui->interfaceEdit->toPlainText();
+        QStringList qsltr = qstr.split("\n");
+        QStringList::const_iterator constIterator;
+        for (constIterator = qsltr.constBegin(); constIterator != qsltr.constEnd(); ++constIterator){
+                qstr = (*constIterator).toLocal8Bit().constData();
+                if(qstr.toStdString().size() >= 5){ // pog p/ evitar o "";
+                    Interface *intf = new Interface(qstr.toStdString(),mgmt->subStrInterfaceType(qstr.toStdString()));
+                    if(mgmt->regexInterfaceName(intf)){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS! e faz o regex!
+                        if(!(mgmt->existInterface(selectedDevice,intf))){
+                            selectedDevice->addIntf(intf);
+                        }
+                    }else{
+                        thereIsAnyError = true;
+                        warningStr = "Interface name error: ";
+                        warningStr.append(QString::fromStdString(intf->getName()));
+                        ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append("\n"));
+                        cout << "Warning: " << warningStr.toStdString()<< endl;
+                        delete intf;
+                    }
+                }
+        }
+        // VERIFICA SE EH SWITCH OU ROUTER
+        if(( type.compare("Router")!=0 && type.compare("Switch")!=0)){
+            thereIsAnyError = true;
+            warningStr = "Type name error: ";
+            ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->typeEdit->toPlainText()));
+        }
+        if(!mgmt->regexIP(ip) || mgmt->existIP(ip)){ // se nao passou passou pelo regex || se existe o ip
+            if(mgmt->existIP(ip, selectedDevice->getIp())){ // se ja existia alguem
+                thereIsAnyError = true;
+                warningStr.append("IP duplicated error: ");
+                ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->ipEdit->toPlainText()));
+            }else if(!mgmt->regexIP(ip)){ // se nao passou pelo regex
+                thereIsAnyError = true;
+                warningStr.append("IP error: ");
+                ui->label_warning->setText(ui->label_warning->toPlainText().append(warningStr).append(ui->ipEdit->toPlainText()));
+            }
+        }
+        if(!thereIsAnyError){
+            selectedDevice->setHostname(hostname);
+            selectedDevice->setIp(ip);
+            selectedDevice->setSerie(serie);
+            selectedDevice->setType(type);
+            setupDeviceTab();
+            repaint();
+        }
     }
 }
 
@@ -287,6 +389,7 @@ void MainWindow::saveEvent() {
 void MainWindow::openEvent() {
     if(!flagSave) {
         mgmt->readTopology();
+        flagSave = true;
         repaint();
     }
 }
