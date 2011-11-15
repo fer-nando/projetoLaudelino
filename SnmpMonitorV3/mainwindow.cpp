@@ -21,11 +21,13 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent),ui(new Ui::MainWind
     // para Thread e entao nao tem como, seria uma contradicao vc instanciar uma classe que tem referencia da outra e vice-versa.
     thread->start();
 
+    selectedDevice = 0;
 
     connect(ui->toolOpen, SIGNAL(clicked()), this, SLOT(openEvent()));
     connect(ui->toolSave, SIGNAL(clicked()), this, SLOT(saveEvent()));
     connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editEvent()));
-    connect(ui->toolKill, SIGNAL(clicked()),this , SLOT(killTopologyEvent()));
+    connect(ui->toolKill, SIGNAL(clicked()), this, SLOT(killTopologyEvent()));
+    connect(ui->toolGraph, SIGNAL(clicked()), this, SLOT(graphEvent()));
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e){
@@ -83,9 +85,9 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
         }
     }
     if(e->text().toStdString().compare("q") == 0){ // ESSES QSTRING IRAO VAO SER SETTADO PELO USUARIO Na Interface
-        QString beginDate = "2012-01-01"; // tem que ser nesse formato "yyyy-mm-dd HH:MM:ss" OU entao somente "2009-01-01" sem as HH:MM:SS
+        QString beginDate = "2010-01-01"; // tem que ser nesse formato "yyyy-mm-dd HH:MM:ss" OU entao somente "2009-01-01" sem as HH:MM:SS
         QString endDate = "2015-01-01";
-        QString host = "hostname";
+        QString host = "hostname2";
         QString intfName = "Fa0/0";
         mgmt->query(beginDate,endDate,host,intfName);
     }
@@ -149,7 +151,6 @@ void MainWindow::paintEvent(QPaintEvent *event){
          pt.setX((((*it)->getDev1())->getRect()->x()+((*it)->getDev2())->getRect()->x())/2 + 20 + (*it)->getLineDeltaX());
          pt.setY((((*it)->getDev1())->getRect()->y()+((*it)->getDev2())->getRect()->y())/2 + 20 + (*it)->getLineDeltaY());
 
-         cout << "Intf1 = " << (*it)->getIntf1()->getStatus() << ", Intf2 = " << (*it)->getIntf2()->getStatus() << endl;
          if((*it)->getIntf1()->getStatus() == 2 && (*it)->getIntf2()->getStatus() == 2) {
             painter.setPen(QPen(Qt::green,3));
          }
@@ -419,5 +420,13 @@ void MainWindow::openEvent() {
         mgmt->readTopology();
         flagSave = true;
         repaint();
+    }
+}
+
+void MainWindow::graphEvent() {
+    if(selectedDevice != 0) {
+        graphWindow = new GraphWindow(selectedDevice, mgmt);
+        graphWindow->setWindowTitle("GraphWindow");
+        graphWindow->show();
     }
 }

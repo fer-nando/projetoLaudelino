@@ -27,6 +27,7 @@
 #include "management.h"
 #include "linkwindow.h"
 #include "dbthread.h"
+#include "graphwindow.h"
 
 using namespace std;
 
@@ -48,6 +49,7 @@ private:
     Device *moveDevice,*dev,*selectedDevice;
     DeviceWindow* deviceWindow;
     LinkWindow* linkWindow;
+    GraphWindow* graphWindow;
     Ui::MainWindow *ui;
     Management *mgmt;
     vector<QLabel*> label_Intf;
@@ -69,6 +71,7 @@ private slots:
     void openEvent();
     void saveEvent();
     void editEvent();
+    void graphEvent();
     void killTopologyEvent();
 public slots:
     void forceRepaint();

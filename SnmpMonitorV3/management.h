@@ -20,6 +20,8 @@ private:
     int counterRedundant;
     vector<Device*> devices;
     vector<Link*> links;
+    QVector<double> bytesIn;
+    QVector<double> bytesOut;
 public:
     Management();
     QSqlDatabase connectDb(); // NOVO
@@ -53,6 +55,8 @@ public:
     Device* createDevice(string ip, string host, string type, string serie, int x, int y, int height, int width);
     vector<Device*>& getDevices();
     vector<Link*>& getLinks();
+    QVector<double> getBytesIn();
+    QVector<double> getBytesOut();
 };
 
 #endif // MANAGEMENT_H

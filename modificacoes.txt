@@ -44,7 +44,7 @@ Ou seja, o Read, presupoe que nao existe nenhum device na topologia. se vc remov
 
 -> Implementada a tab 'Status'.
 -> Configuracao da cor dos links de acordo com o status dos devices.
--> Removida a funcao 'setInterfaceWired()' e implementada 'getInterface(string)' para corrigir oo  ponteiro errado dos links.
+-> Removida a funcao 'setInterfaceWired()' e implementada 'getInterface(string)' para corrigir o ponteiro errado dos links.
 
 ####### 12/11 - Arcanjo #######
 

@@ -10,6 +10,7 @@ QT       += sql
 TARGET = SnmpMonitorV3
 TEMPLATE = app
 
+qtAddLibrary(qwt)
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -19,7 +20,8 @@ SOURCES += main.cpp\
     link.cpp \
     linkwindow.cpp \
     devicewindow.cpp \
-    dbthread.cpp
+    dbthread.cpp \
+    graphwindow.cpp
 
 HEADERS  += mainwindow.h \
     device.h \
@@ -28,50 +30,10 @@ HEADERS  += mainwindow.h \
     link.h \
     linkwindow.h \
     devicewindow.h \
-    dbthread.h
+    dbthread.h \
+    graphwindow.h
 
 FORMS    += mainwindow.ui \
     linkwindow.ui \
-    devicewindow.ui
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    devicewindow.ui \
+    graphwindow.ui

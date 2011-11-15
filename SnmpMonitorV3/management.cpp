@@ -464,6 +464,8 @@ void Management::query(QString beginTimeStamp, QString endTimeStamp,QString host
    AND HistBw.date < '2015-1-1') ORDER BY HistBw.date;
 
     */
+    bytesIn.clear();
+    bytesOut.clear();
 
     beginTimeStamp = formatString(beginTimeStamp);
     endTimeStamp = formatString(endTimeStamp);
@@ -482,14 +484,23 @@ void Management::query(QString beginTimeStamp, QString endTimeStamp,QString host
     cout <<queryStr.toStdString() << endl;
     QSqlQuery query;
     query.exec(queryStr);
-    int bytes_in;
-    int bytes_out;
+
     while (query.next()) {
-           bytes_in = query.value(0).toInt();
-           bytes_out = query.value(1).toInt();
-           cout << "\t\tbytes_in: \t" << bytes_in << " \tbytes_out: \t" << bytes_out << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
+        bytesIn.push_back(query.value(0).toDouble());
+        bytesOut.push_back(query.value(1).toDouble());
+        cout << "\t\tbytes_in: \t" << bytesIn.back() << " \tbytes_out: \t" << bytesOut.back() << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
     }
 }
+
+QVector<double> Management::getBytesIn() {
+    return bytesIn;
+}
+
+QVector<double> Management::getBytesOut() {
+    return bytesOut;
+}
+
+
 QString Management::formatString(QString s){ // formata a string entre '' (aspas)
     QString temp = "'";
     temp.append(s);
