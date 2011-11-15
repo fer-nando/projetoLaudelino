@@ -46,8 +46,50 @@ Ou seja, o Read, presupoe que nao existe nenhum device na topologia. se vc remov
 -> Configuracao da cor dos links de acordo com o status dos devices.
 -> Removida a funcao 'setInterfaceWired()' e implementada 'getInterface(string)' para corrigir oo  ponteiro errado dos links.
 
+####### 12/11 - Arcanjo #######
 
+-> Persistencia feita no banco de dados e nao mais em .txt Para isso foi criada uma nova tabela Link - feito updates nos metodos Management::writeTopology() e readTopology() - como vc pode ver no diretorio createDB
+-> Script SQL de criacao das tabelas encontra-se em createDB/create_tables.sql  (****** FACA ISSO ANTES DE QLQR COISA ******) 
+	**** -> (faca as configuracoes abaixo no sql, senao o script e o QT nao vai conseguir fazer nada no Banco!)
+	**** -> Nome do databse: mydb
+	**** -> user: root
+	**** -> password: root
+-> Script para gerar historico aleatorio no  banco de dados totalmente flexivel em relacao as datas de geracao, encontra-se em: /script/db_simulate.pl
+	**** -> recebe como parametro:
+	# ARG 0 = ID MAXIMO DAS INTERFACES!
+	# ARG 1 = Qnt de inserts a ser gerados!
+	# ARG 2 = BYTES_IN_MAX
+	# ARG 3 = BYTES_OUT_MAX
+	# ARG 4 = DELTA T em segundos a cada iteracao!
+	# ARG 5 = DATA FUTURA SOMENTE =>=> YYYY-MM-DD, se deixado em branco sera a data atual.
+-> Script para forcar o status de qualquer interface para Up ou Down, para simular a indisponibilidade de uma interface de um device; encontra-se em /script/intf_status_simulate.pl 
+	***** -> parametros:
+	# ARG 0 = nome do host
+	# ARG 1 = nome da interface
+	# ARG 2 = status = Up|Down
+-> Adicionada uma Thread que a cada X segundos (neste momento, X = 3), chama o metodo Management::updateStatusTopology() que faz uma query no banco de dados, buscando o status de todas as interfaces existentes na topologia OU SEJA tem que dar um ***SAVE NO BOTAO**** para os dados entrar na persistencia para isso aqui comecar a funcionar. Sendo assim, como tem a thread rodando a cada 3 segundos se vc utilizar o script para simular o status down de uma interface o link vai ficar vermelho na proxima iteracao da thread.
+
+-> Adicionei varios prints para vc perceber os esquemas!!!
+
+-> Foi feito um POG:
+
+  QTimer *timer = new QTimer(this);
+               connect(timer, SIGNAL(timeout()), this, SLOT(forceRepaint()));
+               timer->start((1000*loopSeconds)+1); // 1 milisegundo a mais apos a thread executar, POG pq nao tem como eu ativar um repaint
+               // no mainwindow atraves da classe DbThread, eu tentei passar MainWindow no construtor mais da zica pq MainWindow ja tem referencia
+               // para Thread e entao nao tem como, seria uma contradicao vc instanciar uma classe que tem referencia da outra e vice-versa.
+               thread->start();
+-> Verificado o metodo Management::query((QString beginTimeStamp, QString endTimeStamp,QString hostname, QString intfName))
+	**** -> este metodo eh ativado por MainWindow usando a tecla 'q' de "query" e na sequencia ele faz a busca no banco pelo tempo inicial, final, o host e o nome da interface e tras os bytes entrantes e saintes da interface de modo ordenado! Sobre a sintaxe da DATA tem comentarios no codigomas, eh do tipo YYYY-MM-DD ou YYYY-MM-DD HH:MM:SS
+
+-> dentro do arquivo script/libmysql eh a biblioteca que o perl usa para conectar no banco.
+
+***********************************************************
 @@@@@@@@@@@@@@@@@@@@@ proximos passos @@@@@@@@@@@@@@@@@@@@@
+***********************************************************
+Ultima coisa que falta a nivel de codigo:
+Finalizar os graficos para acabar tudo!
 
--> Aprender a fazer um grafico, usando qwt. (já fiz um teste, temos que ver um método que os dois consigam compilar)
--> Depois q os graficos estiverem prontos para os parametros do eixo x, eixo y, integramos com o script (qndo chegar nesse momento eu te passo o programa de simulacao de redes e o scripts para pode testar e fazer as paradas neste ponto a gente volta pra biblioteca).
+dpois -> revisar o documento que foi entregue ate o dia 16/11!!!!
+dpois -> finalizar a segunda parte ate o dia 30/11!!!
+***********************************************************

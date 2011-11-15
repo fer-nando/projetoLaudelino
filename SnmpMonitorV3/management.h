@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <QRegExp>
+#include <QtSql>
 #include "device.h"
 #include "link.h"
 
@@ -21,6 +22,10 @@ private:
     vector<Link*> links;
 public:
     Management();
+    QSqlDatabase connectDb(); // NOVO
+    void closeDb(); // NOVO
+    void query(QString beginTimeStamp, QString endTimeStamp,QString hostname, QString intfName); // NOVO
+    QString formatString(QString); // NOVO
     void move(Device* dev, int pressedX, int pressedY, int x, int y);
     bool removeLinkFrom(Device* dev);
     void createInterface(Device* dev, string name, string type);
@@ -38,6 +43,7 @@ public:
     void printLinks();
     void killTopology();
     void writeTopology();
+    void updateStatusTopology();
     void readTopology();
     void createLink(Device *dev1, Interface *intf1, Device *dev2, Interface *intf2);
     bool regexInterfaceName(Interface *intf);

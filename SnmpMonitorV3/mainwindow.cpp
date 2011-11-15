@@ -10,7 +10,17 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent),ui(new Ui::MainWind
     pixmapSwitch = new QPixmap("switch.png");
     pixmapRouter = new QPixmap("router.png");
 
+    loopSeconds = 3;
     flagSave = false;
+    thread = new DbThread(0,loopSeconds,mgmt); // thread
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(forceRepaint()));
+    timer->start((1000*loopSeconds)+1); // 1 milisegundo a mais apos a thread executar, POG pq nao tem como eu ativar um repaint
+    // no mainwindow atraves da classe DbThread, eu tentei passar MainWindow no construtor mais da zica pq MainWindow ja tem referencia
+    // para Thread e entao nao tem como, seria uma contradicao vc instanciar uma classe que tem referencia da outra e vice-versa.
+    thread->start();
+
 
     connect(ui->toolOpen, SIGNAL(clicked()), this, SLOT(openEvent()));
     connect(ui->toolSave, SIGNAL(clicked()), this, SLOT(saveEvent()));
@@ -49,7 +59,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
         repaint();
     }
     if(e->text().toStdString().compare("b") == 0){
-        if(selectedDevice != 0) {
+        // NAO PRECISA MAIS DISSO
+        /*if(selectedDevice != 0) {
             for(vector<Interface*>::iterator it = selectedDevice->getInterfaces().begin(); it != selectedDevice->getInterfaces().end(); ++it){
                 if((*it)->getStatus() == 2) {
                     (*it)->setStatus(1);
@@ -59,7 +70,24 @@ void MainWindow::keyPressEvent(QKeyEvent *e){
                 }
             }
             repaint();
+        }*/
+    }
+    if(e->text().toStdString().compare("t") == 0){
+        if(!thread->isRunning()){
+               QTimer *timer = new QTimer(this);
+               connect(timer, SIGNAL(timeout()), this, SLOT(forceRepaint()));
+               timer->start((1000*loopSeconds)+1); // 1 milisegundo a mais apos a thread executar, POG pq nao tem como eu ativar um repaint
+               // no mainwindow atraves da classe DbThread, eu tentei passar MainWindow no construtor mais da zica pq MainWindow ja tem referencia
+               // para Thread e entao nao tem como, seria uma contradicao vc instanciar uma classe que tem referencia da outra e vice-versa.
+               thread->start();
         }
+    }
+    if(e->text().toStdString().compare("q") == 0){ // ESSES QSTRING IRAO VAO SER SETTADO PELO USUARIO Na Interface
+        QString beginDate = "2012-01-01"; // tem que ser nesse formato "yyyy-mm-dd HH:MM:ss" OU entao somente "2009-01-01" sem as HH:MM:SS
+        QString endDate = "2015-01-01";
+        QString host = "hostname";
+        QString intfName = "Fa0/0";
+        mgmt->query(beginDate,endDate,host,intfName);
     }
 }
 

@@ -20,11 +20,13 @@
 #include <QGraphicsItem>
 #include <QPainterPath>
 #include <QGraphicsRectItem>
+#include <QTimer>
 #include <QPixmap>
 #include <QMouseEvent>
 #include "devicewindow.h"
 #include "management.h"
 #include "linkwindow.h"
+#include "dbthread.h"
 
 using namespace std;
 
@@ -36,6 +38,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
+    int loopSeconds;
     QPixmap *pixmapSwitch, *pixmapRouter;
     int x, y, X_MAX, Y_MAX, RECT_WIDTH, RECT_HEIGHT, X_OFFSET, Y_UPPER_OFFSET, Y_LOWER_OFFSET;
     int pressedX, pressedY;
@@ -48,7 +51,7 @@ private:
     Ui::MainWindow *ui;
     Management *mgmt;
     vector<QLabel*> label_Intf;
-
+    DbThread* thread;
     void setupDeviceTab();
 public: 
     explicit MainWindow(QWidget *parent = 0);
@@ -63,11 +66,12 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
     void resizeEvent(QResizeEvent *);
 private slots:
-    void forceRepaint();
     void openEvent();
     void saveEvent();
     void editEvent();
     void killTopologyEvent();
+public slots:
+    void forceRepaint();
 };
 
 #endif // MAINWINDOW_H

@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += sql
 
 TARGET = SnmpMonitorV3
 TEMPLATE = app
@@ -17,7 +18,8 @@ SOURCES += main.cpp\
     management.cpp \
     link.cpp \
     linkwindow.cpp \
-    devicewindow.cpp
+    devicewindow.cpp \
+    dbthread.cpp
 
 HEADERS  += mainwindow.h \
     device.h \
@@ -25,11 +27,14 @@ HEADERS  += mainwindow.h \
     management.h \
     link.h \
     linkwindow.h \
-    devicewindow.h
+    devicewindow.h \
+    dbthread.h
 
 FORMS    += mainwindow.ui \
     linkwindow.ui \
     devicewindow.ui
+
+
 
 
 

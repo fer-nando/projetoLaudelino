@@ -1,6 +1,7 @@
 #include "management.h"
 
 Management::Management(){
+    connectDb(); // NOVO
     counterRedundant = 0;
 }
 
@@ -27,6 +28,30 @@ string Management::subStrInterfaceType(string str){
     return str.substr(0,2); // indice 0 ate 2 (0 e 1 inclusive)
 }
 
+void Management::updateStatusTopology(){ // 2 == Up -> 1 == Down
+    int statusFromQuery;
+    QString stringFromQuery;
+    QSqlQuery query;
+    cout << "updateStatusTopology():" << endl;
+    vector<Device*>::iterator it;
+    for(it = devices.begin();it!=devices.end();++it){
+       vector<Interface*>::iterator itf;
+       for(itf = (*it)->getInterfaces().begin(); itf != (*it)->getInterfaces().end(); ++itf){
+           QString queryStr = "select status from Interface where id_hostname = ";
+           queryStr.append(formatString(QString::fromStdString((*it)->getHostname())));
+           queryStr.append(" AND name = ");
+           queryStr.append(formatString(QString::fromStdString((*itf)->getName())));
+           query.exec(queryStr);
+           while (query.next()) { // so entra uma vez.. eh um unico retorno que vem do select!
+                stringFromQuery = query.value(0).toString();
+           }
+           cout << queryStr.toStdString() << " -> status = " << stringFromQuery.toStdString() << endl;
+           statusFromQuery = (stringFromQuery.compare("Down") == 0)? 1:2;
+           (*itf)->setStatus(statusFromQuery);
+       }
+    }
+}
+
 bool Management::existStrLinkMismatch(Interface *intf1,Interface* intf2){ // unica incompatibilidade eh serial com fa ou gi
     if(intf1->getType().compare("Se") == 0 && (!intf2->getType().compare("Fa") || !intf2->getType().compare("Gi"))){ // Serial eh incompativel com Fa e Gi
         return true;
@@ -37,137 +62,169 @@ bool Management::existStrLinkMismatch(Interface *intf1,Interface* intf2){ // uni
 }
 
 void Management::writeTopology(){
-    //Device* createDevice(string ip, string host, string type, string serie, int x, int y, int height, int width);
-    ofstream myfile ("topology.txt");
-    if (myfile.is_open()) {
-        vector<Device*>::iterator it;
-        for(it = devices.begin();it!=devices.end();++it){
-            myfile << "Device\n";
-            string str;
-            string aux = ",";
-            str.append((*it)->getIp());
-            str.append(aux);
-            str.append((*it)->getHostname());
-            str.append(aux);
-            str.append((*it)->getType());
-            str.append(aux).append((*it)->getSerie());
-            str.append(aux);
-            str.append(QString::number((*it)->getRect()->x()).toStdString());
-            str.append(aux);
-            str.append(QString::number((*it)->getRect()->y()).toStdString());
-            str.append(aux);
-            str.append(QString::number((*it)->getRect()->height()).toStdString());
-            str.append(aux);
-            str.append(QString::number((*it)->getRect()->width()).toStdString());
-            str.append("\n");
-            vector<Interface*>::iterator itr;
-            for(itr = (*it)->getInterfaces().begin(); itr != (*it)->getInterfaces().end(); ++itr){
-                str.append("Interface\n");
-                str.append((*itr)->getName());
-                str.append("\n");
-            }
-            myfile << str;
-        }
-        vector<Link*>::iterator i;
-        for(i = links.begin();i!=links.end();++i){
-              myfile << "Link\n";
-              string str;
-              string aux = ",";
-              str.append((*i)->getDev1()->getHostname());
-              str.append(aux);
-              str.append((*i)->getIntf1()->getName());
-              str.append(aux);
-              str.append((*i)->getDev2()->getHostname());
-              str.append(aux);
-              str.append((*i)->getIntf2()->getName());
-              str.append("\n");
-              myfile << str;
-        }
-        myfile.close();
+    QSqlQuery query;
+    query.prepare("truncate table Device");
+    query.exec();
+    query.prepare("truncate table Interface");
+    query.exec();
+    query.prepare("truncate table Link");
+    query.exec();
+    vector<Device*>::iterator it;
+    for(it = devices.begin();it!=devices.end();++it){
+        query.prepare("insert into Device (hostname,ip,type,serie,up_time,rect_x,rect_y,rect_height,rect_width) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        query.addBindValue(QString::fromStdString((*it)->getHostname()));
+        query.addBindValue(QString::fromStdString((*it)->getIp()));
+        query.addBindValue(QString::fromStdString((*it)->getType()));
+        query.addBindValue(QString::fromStdString((*it)->getSerie()));
+        query.addBindValue(QString::fromStdString((*it)->getUpTime()).toInt());
+        query.addBindValue(QString::number((*it)->getRect()->x()));
+        query.addBindValue(QString::number((*it)->getRect()->y()));
+        query.addBindValue(QString::number((*it)->getRect()->height()));
+        query.addBindValue(QString::number((*it)->getRect()->width()));
+        query.exec();
+
+        vector<Interface*>::iterator itr;
+        for(itr = (*it)->getInterfaces().begin(); itr != (*it)->getInterfaces().end(); ++itr){
+                query.prepare("insert into Interface (type,status,name,id_hostname) VALUES (?, ?, ?, ?)");
+                query.addBindValue(QString::fromStdString(subStrInterfaceType((*itr)->getName())));
+                if((*itr)->getStatus() == 1){ //Down
+                    query.addBindValue("Down");
+                }else{
+                    query.addBindValue("Up");
+                }
+                query.addBindValue(QString::fromStdString((*itr)->getName()));
+                query.addBindValue(QString::fromStdString((*it)->getHostname()));
+                query.exec();
+         }
+    }
+    QSqlQuery query2;
+    QString queryStr2;
+    vector<Link*>::iterator i;
+    for(i = links.begin();i!=links.end();++i){
+          QString hostname, intf;
+          int link_intf[2];
+          hostname = QString::fromStdString((*i)->getDev1()->getHostname());
+          intf = QString::fromStdString((*i)->getIntf1()->getName());
+          for(int x=0;x<2;x++){
+              if(x == 1){
+                  hostname = QString::fromStdString((*i)->getDev2()->getHostname());
+                  intf = QString::fromStdString((*i)->getIntf2()->getName());
+              }
+              queryStr2 = "select id from Interface where id_hostname = ";
+              queryStr2.append(formatString(hostname));
+              queryStr2.append(" AND name = ");
+              queryStr2.append(formatString(intf));
+              query2.exec(queryStr2);
+              while (query2.next()) {
+                  link_intf[x] = query2.value(0).toInt();
+              }
+           }
+           query.prepare("insert into Link (hostname_1,hostname_2,intf_1,intf_2) VALUES (?, ?, ?, ?)");
+           query.addBindValue(QString::fromStdString((*i)->getDev1()->getHostname()));
+           query.addBindValue(QString::fromStdString((*i)->getDev2()->getHostname()));
+           query.addBindValue(QString::number(link_intf[0]));
+           query.addBindValue(QString::number(link_intf[1]));
+           query.exec();
       }
-      else cout << "Unable to open file";
 }
 
 void Management::readTopology(){
-     string line;
-     ifstream myfile ("topology.txt");
-     bool flagDevice = false;
-     bool flagInterface = false;
-     bool flagLink = false;
-     Device* dev;
-     if (myfile.is_open()){
-           while ( myfile.good() ){
-                 getline (myfile,line);
-                 if(flagDevice){
-                      cout << "device: " << line << endl;
-                      QString qstr;
-                      QString *array = new QString[8];
-                      QStringList qsltr = QString::fromStdString(line).split(",");
-                      QStringList::const_iterator constIterator;
-                      int j=0;
-                      for (constIterator = qsltr.constBegin(); constIterator != qsltr.constEnd();++constIterator,j++){
-                              qstr = (*constIterator).toLocal8Bit().constData();
-                              array[j] = qstr;
-                              //cout << qstr.toStdString() << endl;
-                      }
-                      dev = createDevice(array[0].toStdString(),array[1].toStdString(),array[2].toStdString(),array[3].toStdString(),array[4].toInt(),array[5].toInt(),array[6].toInt(),array[7].toInt());
-                 }
-                 if(flagInterface){
-                      cout << "interface: " << line << endl;
-                      Interface *intf = new Interface(line,subStrInterfaceType(line));
-                      dev->addIntf(intf);
-                 }
-                 if(flagLink){
-                     cout << line << endl;
-                     QString qstr;
-                     string *array = new string[4];
-                     QStringList qsltr = QString::fromStdString(line).split(",");
-                     QStringList::const_iterator constIterator;
-                     int j=0;
-                     for (constIterator = qsltr.constBegin(); constIterator != qsltr.constEnd();++constIterator,j++){
-                             qstr = (*constIterator).toLocal8Bit().constData();
-                             array[j] = qstr.toStdString();
-                             cout << array[j] << endl;
-                             //cout << qstr.toStdString() << endl;
-                     }
-                     Device *dev1,*dev2;
-                     Interface *intf1,*intf2;
-                     vector<Device*>::iterator itt;
-                     for(itt = devices.begin();itt!=devices.end();++itt){
-                         cout << (*itt)->getHostname() << endl;
-                         if((*itt)->getHostname().compare(array[0]) == 0){ //array[0] dev1hostname
-                             dev1 = *(itt);
-                         }if((*itt)->getHostname().compare(array[2]) == 0){ //array[2] dev2hostname
-                             dev2 = *(itt);
-                         }
-                     }
-                     intf1 = dev1->getInterface(array[1]);
-                     intf1->setWired(true);
-                     intf2 = dev2->getInterface(array[3]);
-                     intf2->setWired(true);
-                     dev1->addDev(intf1,dev2); // para mostrar adj dps
-                     dev2->addDev(intf2,dev1); // para mostrar adj dps
-                     createLink(dev1,intf1,dev2,intf2);
-                 }
-                 if(line.compare("Device") == 0){
-                     flagDevice = true;
-                 }else{
-                     flagDevice = false;
-                 }
-                 if(line.compare("Interface") == 0){
-                     flagInterface = true;
-                 }else{
-                     flagInterface = false;
-                 }
-                 if(line.compare("Link") == 0){
-                     flagLink = true;
-                 }else{
-                     flagLink = false;
-                 }
-           }
-           myfile.close();
+     QSqlQuery query, query2, query3;
+     query.prepare("select * from Device");
+     query.exec();
+     string hostname, ip,type,serie;
+     int up_time, rect_x, rect_y, rect_height, rect_width;
+     Device* _dev;
+     Interface* _intf;
+     while (query.next()) {
+        hostname = query.value(0).toString().toStdString();
+        ip = query.value(1).toString().toStdString();
+        type = query.value(2).toString().toStdString();
+        serie =  query.value(3).toString().toStdString();
+        up_time = query.value(4).toInt();
+        rect_x = query.value(5).toInt();
+        rect_y = query.value(6).toInt();
+        rect_height = query.value(7).toInt();
+        rect_width = query.value(8).toInt();
+        cout << hostname << " " << ip << " " << type << " " << serie << " " << up_time << " "<<  rect_x << " " << rect_y << " " << rect_height << " " << rect_width << endl;
+        _dev = createDevice(ip,hostname,type,serie,rect_x,rect_y,rect_height,rect_width);
+        QString queryStr = "select * from Interface where id_hostname = ";
+        queryStr.append(formatString(QString::fromStdString((hostname))));
+        query2.prepare(queryStr);
+        int id_interface;
+        string type, status, name, id_hostname;
+        query2.exec();
+        while(query2.next()){
+            id_interface = query2.value(0).toInt();
+            type = query2.value(1).toString().toStdString();
+            status = query2.value(2).toString().toStdString();
+            name = query2.value(3).toString().toStdString();
+            id_hostname = query2.value(4).toString().toStdString();
+            cout << id_interface << " " << type << " " << status << " " << name << " "<<  id_hostname << endl;
+            _intf = new Interface(name,type);
+            if(status.compare("Down") == 0){
+                _intf->setStatus(1);
+            }else{
+                _intf->setStatus(2);
+            }
+            _dev->addIntf(_intf);
+        }
+        cout << endl;
      }
-     else cout << "Unable to open file";
+
+     query.prepare("select * from Link");
+     query.exec();
+     Device *dev1,*dev2;
+     Interface *intf1,*intf2;
+     string str_hostname1, str_hostname2, str_intf1, str_intf2;
+     int int_intf1, int_intf2;
+     vector<Device*>::iterator itt;
+     while(query.next()){
+
+         QString queryStr2 = "select * from Interface where id_hostname = ";
+         QString queryStr3 = "select * from Interface where id_hostname = ";
+
+         str_hostname1 =  query.value(1).toString().toStdString();
+         str_hostname2 =  query.value(2).toString().toStdString();
+         int_intf1 = query.value(3).toInt();
+         int_intf2 = query.value(4).toInt();
+
+         queryStr2.append(formatString(QString::fromStdString((str_hostname1))));
+         queryStr2.append(" AND id = ");
+         queryStr2.append(QString::number(int_intf1));
+
+         queryStr3.append(formatString(QString::fromStdString((str_hostname2))));
+         queryStr3.append(" AND id = ");
+         queryStr3.append(QString::number(int_intf2));
+
+         for(itt = devices.begin();itt!=devices.end();++itt){
+             if((*itt)->getHostname().compare(str_hostname1) == 0){ //array[0] dev1hostname
+                 dev1 = *(itt);
+             }if((*itt)->getHostname().compare(str_hostname2) == 0){ //array[2] dev2hostname
+                 dev2 = *(itt);
+             }
+         }
+
+         query2.prepare(queryStr2);
+         query2.exec();
+         while(query2.next()){
+             str_intf1 = query2.value(3).toString().toStdString();
+         }
+
+         query3.prepare(queryStr3);
+         query3.exec();
+         while(query3.next()){
+             str_intf2 = query3.value(3).toString().toStdString();
+         }
+
+         intf1 = dev1->getInterface(str_intf1);
+         intf1->setWired(true);
+         intf2 = dev2->getInterface(str_intf2);
+         intf2->setWired(true);
+         dev1->addDev(intf1,dev2); // para mostrar adj dps
+         dev2->addDev(intf2,dev1); // para mostrar adj dps
+         createLink(dev1,intf1,dev2,intf2);
+     }
 }
 
 bool Management::regexIP(string ip){
@@ -377,4 +434,65 @@ vector<Device*>& Management::getDevices(){
 
 vector<Link*>& Management::getLinks(){
     return this->links;
+}
+
+
+QSqlDatabase Management::connectDb(){ // NOVO
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("localhost");
+    db.setDatabaseName("mydb");
+    db.setUserName("root");
+    db.setPassword("root");
+    if(!db.open()){
+        cout << "zica no banco!" << endl;
+    }
+    return db;
+}
+void Management::closeDb(){ // NOVO
+    QSqlDatabase::removeDatabase("QMYSQL");
+}
+void Management::query(QString beginTimeStamp, QString endTimeStamp,QString hostname, QString intfName){ // NOVO
+    /*  QUERY
+     SELECT HistBw.bw_in, HistBw.bw_out FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id)
+    WHERE (Interface.id_hostname = 'hostname' AND Interface.name = 'Fa0/0' AND HistBw.date > '2012-1-1' AND HistBw.date < '2015-1-1')
+    ORDER BY HistBw.date;
+
+    PARA DEBUG: - seleciona *
+
+    SELECT * FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id) WHERE
+   (Interface.id_hostname = 'hostname' AND Interface.name = 'Fa0/0' AND HistBw.date > '2012-1-1'
+   AND HistBw.date < '2015-1-1') ORDER BY HistBw.date;
+
+    */
+
+    beginTimeStamp = formatString(beginTimeStamp);
+    endTimeStamp = formatString(endTimeStamp);
+    hostname = formatString(hostname);
+    intfName = formatString(intfName);
+    QString queryStr = "SELECT HistBw.bw_in, HistBw.bw_out FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id) WHERE (Interface.id_hostname = ";
+    queryStr.append(hostname);
+    queryStr.append(" AND  Interface.name = ");
+    queryStr.append(intfName);
+    queryStr.append(" AND HistBw.date > ");
+    queryStr.append(beginTimeStamp);
+    queryStr.append(" AND HistBw.date < ");
+    queryStr.append(endTimeStamp);
+    queryStr.append(") ORDER BY HistBw.date");
+    cout << "\t\t\t\t (APAGA ISSO AQUI DEPOIS, SOH PRA VC VER MAIS FACIL!) QUERY : " << endl;
+    cout <<queryStr.toStdString() << endl;
+    QSqlQuery query;
+    query.exec(queryStr);
+    int bytes_in;
+    int bytes_out;
+    while (query.next()) {
+           bytes_in = query.value(0).toInt();
+           bytes_out = query.value(1).toInt();
+           cout << "\t\tbytes_in: \t" << bytes_in << " \tbytes_out: \t" << bytes_out << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
+    }
+}
+QString Management::formatString(QString s){ // formata a string entre '' (aspas)
+    QString temp = "'";
+    temp.append(s);
+    temp.append("'");
+    return temp;
 }
