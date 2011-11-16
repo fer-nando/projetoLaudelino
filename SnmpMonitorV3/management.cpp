@@ -32,7 +32,7 @@ void Management::updateStatusTopology(){ // 2 == Up -> 1 == Down
     int statusFromQuery;
     QString stringFromQuery;
     QSqlQuery query;
-    cout << "updateStatusTopology():" << endl;
+    //cout << "updateStatusTopology():" << endl;
     vector<Device*>::iterator it;
     for(it = devices.begin();it!=devices.end();++it){
        vector<Interface*>::iterator itf;
@@ -45,7 +45,7 @@ void Management::updateStatusTopology(){ // 2 == Up -> 1 == Down
            while (query.next()) { // so entra uma vez.. eh um unico retorno que vem do select!
                 stringFromQuery = query.value(0).toString();
            }
-           cout << queryStr.toStdString() << " -> status = " << stringFromQuery.toStdString() << endl;
+           //cout << queryStr.toStdString() << " -> status = " << stringFromQuery.toStdString() << endl;
            statusFromQuery = (stringFromQuery.compare("Down") == 0)? 1:2;
            (*itf)->setStatus(statusFromQuery);
        }
@@ -453,7 +453,7 @@ void Management::closeDb(){ // NOVO
 }
 void Management::query(QString beginTimeStamp, QString endTimeStamp,QString hostname, QString intfName){ // NOVO
     /*  QUERY
-     SELECT HistBw.bw_in, HistBw.bw_out FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id)
+     SELECT HistBw.bw_in, HistBw.bw_out, HistBw.date FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id)
     WHERE (Interface.id_hostname = 'hostname' AND Interface.name = 'Fa0/0' AND HistBw.date > '2012-1-1' AND HistBw.date < '2015-1-1')
     ORDER BY HistBw.date;
 
@@ -466,12 +466,13 @@ void Management::query(QString beginTimeStamp, QString endTimeStamp,QString host
     */
     bytesIn.clear();
     bytesOut.clear();
+    date.clear();
 
     beginTimeStamp = formatString(beginTimeStamp);
     endTimeStamp = formatString(endTimeStamp);
     hostname = formatString(hostname);
     intfName = formatString(intfName);
-    QString queryStr = "SELECT HistBw.bw_in, HistBw.bw_out FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id) WHERE (Interface.id_hostname = ";
+    QString queryStr = "SELECT HistBw.bw_in, HistBw.bw_out, HistBw.date FROM HistBw RIGHT JOIN Interface ON (HistBw.id_intf = Interface.id) WHERE (Interface.id_hostname = ";
     queryStr.append(hostname);
     queryStr.append(" AND  Interface.name = ");
     queryStr.append(intfName);
@@ -488,7 +489,8 @@ void Management::query(QString beginTimeStamp, QString endTimeStamp,QString host
     while (query.next()) {
         bytesIn.push_back(query.value(0).toDouble());
         bytesOut.push_back(query.value(1).toDouble());
-        cout << "\t\tbytes_in: \t" << bytesIn.back() << " \tbytes_out: \t" << bytesOut.back() << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
+        date.push_back((query.value(2).toDateTime()));
+        cout << "\tdate: \t" << date.back().toString("yyyy-MM-dd hh:mm:ss").toStdString() << "\tbytes_in: \t" << bytesIn.back() << " \tbytes_out: \t" << bytesOut.back() << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
     }
 }
 
@@ -500,6 +502,9 @@ QVector<double> Management::getBytesOut() {
     return bytesOut;
 }
 
+QVector<QDateTime> Management::getDate() {
+    return date;
+}
 
 QString Management::formatString(QString s){ // formata a string entre '' (aspas)
     QString temp = "'";

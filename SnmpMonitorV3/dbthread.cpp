@@ -8,7 +8,7 @@ DbThread::DbThread(QObject *parent, int sleepSeg, Management *management) : QThr
 void DbThread::run(){
     while(true){
         sleep(sleep_seg);
-        cout << "thread exec ";
+        //cout << "thread exec ";
         mgmt->updateStatusTopology();
     }
 }

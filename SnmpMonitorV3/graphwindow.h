@@ -25,7 +25,8 @@ public:
 private:
     QVector<double> bytesIn;
     QVector<double> bytesOut;
-    QVector<double> dataTime;
+    QVector<double> interval;
+    QVector<QDateTime> date;
     QColor c;
     QwtPlotCurve *curve_bi;
     QwtPlotCurve *curve_bo;

@@ -22,6 +22,7 @@ private:
     vector<Link*> links;
     QVector<double> bytesIn;
     QVector<double> bytesOut;
+    QVector<QDateTime> date;
 public:
     Management();
     QSqlDatabase connectDb(); // NOVO
@@ -57,6 +58,7 @@ public:
     vector<Link*>& getLinks();
     QVector<double> getBytesIn();
     QVector<double> getBytesOut();
+    QVector<QDateTime> getDate();
 };
 
 #endif // MANAGEMENT_H
