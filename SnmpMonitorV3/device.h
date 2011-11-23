@@ -25,8 +25,8 @@ public:
     void setUpTime(string upTime);
     void setType(string type);
     void setSerie(string serie);
-    void addDev(Interface* intf,Device* dev); // add no hash
-    void addIntf(Interface* intf);
+    void addDevice(Interface* intf,Device* dev); // add no hash
+    void addInterface(Interface* intf);
     void printDefault();
     void print();
     void printRect();

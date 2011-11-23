@@ -49,18 +49,18 @@ GraphWindow::GraphWindow(Device* d, Management *m, QWidget *parent) :
     }
 
     // Configura curva de bytes in e adiciona no plot
-    curve_bi = new QwtPlotCurve("Bytes in");
+    curveBI = new QwtPlotCurve("Bytes in");
     c = QColor(0, 0, 255, 150);
-    curve_bi->setPen(c);
-    curve_bi->setBrush(c);
-    curve_bi->attach(ui->qwtPlot);
+    curveBI->setPen(c);
+    curveBI->setBrush(c);
+    curveBI->attach(ui->qwtPlot);
 
     // Configura curva de bytes out e adiciona no plot
-    curve_bo = new QwtPlotCurve("Bytes out");
+    curveBO = new QwtPlotCurve("Bytes out");
     c = QColor(255, 0, 0, 150);
-    curve_bo->setPen(c);
-    curve_bo->setBrush(c);
-    curve_bo->attach(ui->qwtPlot);
+    curveBO->setPen(c);
+    curveBO->setBrush(c);
+    curveBO->attach(ui->qwtPlot);
 
     // Configura a data de inicio e fim
     ui->dateBegin->setDate(QDate(2010, 01, 01));
@@ -82,25 +82,25 @@ void GraphWindow::displayGraph() {
 
     bytesIn.clear();
     bytesOut.clear();
-    date.clear();
+    dates.clear();
     interval.clear();
 
     bytesIn = mgmt->getBytesIn();
     bytesOut = mgmt->getBytesOut();
-    date = mgmt->getDate();
+    dates = mgmt->getDate();
     interval.push_back(0);
     for(int i = 0; i < bytesIn.size()-1; i++) {
-        cout << "interval: " << date.at(0).secsTo(date.at(i)) << endl;
-        interval.push_back(double(date.at(0).secsTo(date.at(i))));
+        cout << "interval: " << dates.at(0).secsTo(dates.at(i)) << endl;
+        interval.push_back(double(dates.at(0).secsTo(dates.at(i))));
     }
 
     if(bytesIn.size() > 0) {
         ui->qwtPlot->setAxisScaleDraw(QwtPlot::xBottom,
-            new TimeScaleDraw(date.at(0)));
+            new TimeScaleDraw(dates.at(0)));
     }
 
-    curve_bi->setData(interval, bytesIn);
-    curve_bo->setData(interval, bytesOut);
+    curveBI->setData(interval, bytesIn);
+    curveBO->setData(interval, bytesOut);
 
     ui->qwtPlot->replot();
 

@@ -47,7 +47,7 @@ void Device::printRect(){
     cout << "Rect x: " << rect->x() << " y: " << rect->y() << endl;
 }
 
-void Device::addDev(Interface* intf,Device* dev){
+void Device::addDevice(Interface* intf,Device* dev){
     neighbors.insert(pair<string,Device*>(intf->getName(),dev));
 }
 
@@ -61,7 +61,7 @@ string Device::find(Interface* intf){
     }
 }
 
-void Device::addIntf(Interface *intf){
+void Device::addInterface(Interface *intf){
     interfaces.push_back(intf);
 }
 

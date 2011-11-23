@@ -26,10 +26,10 @@ private:
     QVector<double> bytesIn;
     QVector<double> bytesOut;
     QVector<double> interval;
-    QVector<QDateTime> date;
+    QVector<QDateTime> dates;
     QColor c;
-    QwtPlotCurve *curve_bi;
-    QwtPlotCurve *curve_bo;
+    QwtPlotCurve *curveBI;
+    QwtPlotCurve *curveBO;
     Device *dev;
     Management *mgmt;
     Ui::GraphWindow *ui;

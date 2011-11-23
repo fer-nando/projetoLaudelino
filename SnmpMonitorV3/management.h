@@ -22,7 +22,8 @@ private:
     vector<Link*> links;
     QVector<double> bytesIn;
     QVector<double> bytesOut;
-    QVector<QDateTime> date;
+    QVector<QDateTime> dates;
+    QSqlDatabase db;
 public:
     Management();
     QSqlDatabase connectDb(); // NOVO
@@ -37,10 +38,9 @@ public:
     bool removeLink(Device *dev1, Interface* intf1, Device* dev2, Interface* intf2);
     bool existInterface(Device* dev, Interface* intf);
     bool existHostname(string hostname, string old_hostname = "");
-    bool existIP(string ip, string old_ip = "");
+    bool existIP(string ip, string oldIp = "");
     bool existStrLinkMismatch(Interface *intf1,Interface* intf2);
     void verifyRedundantLink(Link *l);
-    void setManagement(Management* mgmt);
     void printDefault();
     void printRect();
     void printLinks();

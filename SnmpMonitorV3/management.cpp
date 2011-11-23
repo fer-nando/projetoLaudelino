@@ -167,7 +167,7 @@ void Management::readTopology(){
             }else{
                 _intf->setStatus(2);
             }
-            _dev->addIntf(_intf);
+            _dev->addInterface(_intf);
         }
         cout << endl;
      }
@@ -221,8 +221,8 @@ void Management::readTopology(){
          intf1->setWired(true);
          intf2 = dev2->getInterface(str_intf2);
          intf2->setWired(true);
-         dev1->addDev(intf1,dev2); // para mostrar adj dps
-         dev2->addDev(intf2,dev1); // para mostrar adj dps
+         dev1->addDevice(intf1,dev2); // para mostrar adj dps
+         dev2->addDevice(intf2,dev1); // para mostrar adj dps
          createLink(dev1,intf1,dev2,intf2);
      }
 }
@@ -305,7 +305,7 @@ void Management::printDefault(){
 
 void Management::createInterface(Device* dev, string name, string type){
     Interface *intf = new Interface(name,type);
-    dev->addIntf(intf);
+    dev->addInterface(intf);
 }
 
 
@@ -368,10 +368,10 @@ bool Management::rectCollision(int x, int y, int height, int width){
     return false;
 }
 
-bool Management::existIP(string ip, string old_ip){
+bool Management::existIP(string ip, string oldIp){
     vector<Device*>::iterator it;
     for(it = devices.begin(); it!=devices.end(); ++it){
-        if(old_ip.compare((*it)->getIp()) == 0) {
+        if(oldIp.compare((*it)->getIp()) == 0) {
             continue;
         }
         if(ip.compare((*it)->getIp()) == 0){
@@ -444,7 +444,7 @@ QSqlDatabase Management::connectDb(){ // NOVO
     db.setUserName("root");
     db.setPassword("root");
     if(!db.open()){
-        cout << "zica no banco!" << endl;
+        cout << "Falha na conexao com o banco de dados!" << endl;
     }
     return db;
 }
@@ -466,7 +466,7 @@ void Management::query(QString beginTimeStamp, QString endTimeStamp,QString host
     */
     bytesIn.clear();
     bytesOut.clear();
-    date.clear();
+    dates.clear();
 
     beginTimeStamp = formatString(beginTimeStamp);
     endTimeStamp = formatString(endTimeStamp);
@@ -489,8 +489,8 @@ void Management::query(QString beginTimeStamp, QString endTimeStamp,QString host
     while (query.next()) {
         bytesIn.push_back(query.value(0).toDouble());
         bytesOut.push_back(query.value(1).toDouble());
-        date.push_back((query.value(2).toDateTime()));
-        cout << "\tdate: \t" << date.back().toString("yyyy-MM-dd hh:mm:ss").toStdString() << "\tbytes_in: \t" << bytesIn.back() << " \tbytes_out: \t" << bytesOut.back() << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
+        dates.push_back((query.value(2).toDateTime()));
+        cout << "\tdate: \t" << dates.back().toString("yyyy-MM-dd hh:mm:ss").toStdString() << "\tbytes_in: \t" << bytesIn.back() << " \tbytes_out: \t" << bytesOut.back() << endl; //  A PARTIR DAQUI PREENCHE UM ARRAY OU ALGO DO TIPO!
     }
 }
 
@@ -503,7 +503,7 @@ QVector<double> Management::getBytesOut() {
 }
 
 QVector<QDateTime> Management::getDate() {
-    return date;
+    return dates;
 }
 
 QString Management::formatString(QString s){ // formata a string entre '' (aspas)

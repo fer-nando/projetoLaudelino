@@ -34,8 +34,8 @@ void LinkWindow::on_buttonBoxOk(){
                 intf1->setWired(true);
                 intf2->setWired(true);
                 mgmt->createLink(dev1,intf1,dev2,intf2);
-                dev1->addDev(intf1,dev2); // para mostrar adj dps
-                dev2->addDev(intf2,dev1); // para mostrar adj dps
+                dev1->addDevice(intf1,dev2); // para mostrar adj dps
+                dev2->addDevice(intf2,dev1); // para mostrar adj dps
             }else{ // modo remove
                 willRemove = mgmt->removeLink(dev1,intf1,dev2,intf2);
             }

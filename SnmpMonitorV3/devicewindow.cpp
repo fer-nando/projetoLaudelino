@@ -14,40 +14,20 @@ void DeviceWindow::setType(string t){
     ui->lineType->setText(QString::fromStdString(t));
 }
 
-void DeviceWindow::afterConstructor(){
-    if(isEdit){
-        ui->lineHostname->setText(QString::fromStdString(device->getHostname()));
-        ui->lineIP->setText(QString::fromStdString(device->getIp()));
-        ui->lineSerie->setText(QString::fromStdString(device->getSerie()));
-        ui->lineType->setText(QString::fromStdString(device->getType()));
-        QString str = "";
-        for(vector<Interface*>::iterator it = device->getInterfaces().begin(); it != device->getInterfaces().end(); ++ it){
-            QString strTemp = QString::fromStdString((*it)->getName());
-            strTemp.append("\n");
-            str.append(strTemp);
-        }
-        ui->textEditInterfaces->setText(str);
-    }
-}
-
 DeviceWindow::~DeviceWindow()
 {
     delete ui;
 }
 
-void DeviceWindow::setIsEdit(bool edit){
-    this->isEdit = edit;
-}
-
 void DeviceWindow::on_buttonBoxCancel(){
     if(!isEdit){
-         mgmt->removeDevice(device); // se o cara nao estava editando.. ele se arrependeu de criar o device e vai ser removido!
+         mgmt->removeDevice(dev); // se o cara nao estava editando.. ele se arrependeu de criar o device e vai ser removido!
     }
     this->close();
 }
 
 void DeviceWindow::setDevice(Device *dev){
-    this->device = dev;
+    this->dev = dev;
 }
 
 void DeviceWindow::setManagement(Management *mgmt){
@@ -70,8 +50,8 @@ void DeviceWindow::on_buttonBoxOk(){
                     if(qstr.toStdString().size() >= 5){ // pog p/ evitar o "";
                             Interface *intf = new Interface(qstr.toStdString(),mgmt->subStrInterfaceType(qstr.toStdString()));
                             if(mgmt->regexInterfaceName(intf)){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS! e faz o regex!
-                                if(!(mgmt->existInterface(device,intf))){
-                                    device->addIntf(intf);
+                                if(!(mgmt->existInterface(dev,intf))){
+                                    dev->addInterface(intf);
                                 }
                             }else{
                                 thereIsAnyError = true;
@@ -101,10 +81,10 @@ void DeviceWindow::on_buttonBoxOk(){
                 }
             }
             if(!thereIsAnyError){
-                device->setHostname(hostname);
-                device->setIp(ip);
-                device->setSerie(serie);
-                device->setType(type);
+                dev->setHostname(hostname);
+                dev->setIp(ip);
+                dev->setSerie(serie);
+                dev->setType(type);
                 emit windowClosed();
                 this->close();
             }

@@ -73,7 +73,6 @@ private slots:
     void editEvent();
     void graphEvent();
     void killTopologyEvent();
-public slots:
     void forceRepaint();
 };
 

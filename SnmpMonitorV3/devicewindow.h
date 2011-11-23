@@ -26,11 +26,9 @@ public:
     ~DeviceWindow();
     void setDevice(Device* dev);
     void setManagement(Management *mgmt);
-    void setIsEdit(bool);
-    void afterConstructor();
     void setType(string);
 private:
-    Device* device;
+    Device* dev;
     Management* mgmt;
     bool isEdit;
     string ip, serie, type, hostname;

@@ -360,7 +360,7 @@ void MainWindow::editEvent(){
                     Interface *intf = new Interface(qstr.toStdString(),mgmt->subStrInterfaceType(qstr.toStdString()));
                     if(mgmt->regexInterfaceName(intf)){ // VALIDA PARA NAO INSERIR DUAS INTERFACES IGUAIS! e faz o regex!
                         if(!(mgmt->existInterface(selectedDevice,intf))){
-                            selectedDevice->addIntf(intf);
+                            selectedDevice->addInterface(intf);
                         }
                     }else{
                         thereIsAnyError = true;
