@@ -328,6 +328,7 @@ void Management::killTopology(){
 // funcao que apaga todas os links de um device!
 void Management::removeDevice(Device* dev){
     vector<Device*>::iterator it;
+
     for(it = devices.begin(); it!=devices.end(); ++it){
         if(dev->getHostname().compare((*it)->getHostname()) == 0){
                 devices.erase(it);
@@ -338,6 +339,7 @@ void Management::removeDevice(Device* dev){
     while(remove){
         remove = removeLinkFrom(dev);
     }
+    delete dev;
 }
 
 bool Management::removeLinkFrom(Device *dev){
@@ -346,8 +348,9 @@ bool Management::removeLinkFrom(Device *dev){
         // se o device esta em alguma das DUAS pontas do link... APAGUE ESTE LINK!
         if( (dev->getHostname().compare(((*i)->getDev1())->getHostname()) == 0) || (dev->getHostname().compare(((*i)->getDev2())->getHostname()) == 0)){
                 (*i)->getIntf1()->setWired(false);
-                (*i)->getIntf1()->setWired(false);
+                (*i)->getIntf2()->setWired(false);
                 links.erase(i);
+                delete *i;
                 return true;
         }
     }
